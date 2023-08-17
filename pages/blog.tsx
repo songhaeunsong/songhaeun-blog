@@ -1,9 +1,10 @@
 import Container from "../components/Container";
 
-export default function Page() {
+const Blog = () => {
   return (
     <Container>
-      <h1>Hello, Next.js!</h1>
+      <div>Blog</div>
     </Container>
   );
-}
+};
+export default Blog;
