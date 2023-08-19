@@ -1,5 +1,7 @@
+import styled from "styled-components";
 import Head from "next/head";
 import Nav from "./Nav";
+import metaData from "@/data/metaData";
 
 const Container = (props: any) => {
   return (
@@ -7,11 +9,23 @@ const Container = (props: any) => {
       <Head>
         <title>하은이의 블로그</title>
       </Head>
-      <header>
+      <Header>
+        <LogoImg src={metaData.logoUrl} alt="logo" />
         <Nav />
-      </header>
+      </Header>
       <main>{props.children}</main>
     </>
   );
 };
+
+const LogoImg = styled.img`
+  width: 100px;
+`;
+
+const Header = styled.header`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 0.5rem;
+`;
 export default Container;
