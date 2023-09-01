@@ -4,6 +4,12 @@ import Nav from "./Nav";
 import metaData from "@/data/metaData";
 
 const Container = (props: any) => {
+  const meta = {
+    title: metaData.title,
+    description: metaData.description,
+    author: metaData.author,
+    ...props.customMeta,
+  };
   return (
     <>
       <Head>
@@ -12,6 +18,9 @@ const Container = (props: any) => {
       <Header>
         <LogoImg src={metaData.logoUrl} alt="logo" />
         <Nav />
+        <title>{meta.title}</title>
+        <meta content={meta.description} name="description" />
+        <meta property="og:site_name" content={meta.author} />
       </Header>
       <main>{props.children}</main>
     </>

@@ -1,6 +1,10 @@
 import Link from "next/link";
+import { Post } from "@/.contentlayer/generated";
 
-const RecentPosts = ({ posts }) => {
+interface RecentPostsProps {
+  posts: Post[];
+}
+const RecentPosts: React.FC<RecentPostsProps> = ({ posts }) => {
   return (
     <section>
       <h1>최근 게시물</h1>

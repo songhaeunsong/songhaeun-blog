@@ -6,9 +6,7 @@ import { InferGetStaticPropsType } from "next";
 const Home = ({ posts }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <Container>
-      <div>
-        <RecentPosts posts={posts} />
-      </div>
+      <div>{posts && <RecentPosts posts={posts} />}</div>
     </Container>
   );
 };

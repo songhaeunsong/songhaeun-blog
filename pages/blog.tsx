@@ -6,16 +6,17 @@ import { InferGetStaticPropsType } from "next";
 const Blog = ({ posts }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <Container>
-      {posts.map((post) => (
-        <BlogPosts
-          date={post.date}
-          title={post.title}
-          des={post.description}
-          slug={post._raw}
-          key={post._id}
-        />
-      ))}
       <div>Blog</div>
+      {posts &&
+        posts.map((post) => (
+          <BlogPosts
+            date={post.date}
+            title={post.title}
+            des={post.description}
+            slug={post._raw}
+            key={post._id}
+          />
+        ))}
     </Container>
   );
 };
