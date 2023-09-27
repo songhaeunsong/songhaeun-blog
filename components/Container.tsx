@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import Link from "next/link";
 import Head from "next/head";
 import Nav from "./Nav";
 import metaData from "@/data/metaData";
@@ -16,7 +17,9 @@ const Container = (props: any) => {
         <title>하은이의 블로그</title>
       </Head>
       <Header>
-        <LogoImg src={metaData.logoUrl} alt="logo" />
+        <Link href="/">
+          <LogoImg src={metaData.logoUrl} alt="logo" />
+        </Link>
         <Nav />
         <title>{meta.title}</title>
         <meta content={meta.description} name="description" />
