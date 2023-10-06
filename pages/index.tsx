@@ -8,7 +8,9 @@ import metaData from "@/data/metaData";
 const Home = ({ posts }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <Container>
-      <HomeImg src={metaData.homeImg} alt="homeImg" />
+      <HomeImg>
+        <img src={metaData.homeImg} alt="homeImg" />
+      </HomeImg>
       <div>{posts && <RecentPosts posts={posts} />}</div>
     </Container>
   );
@@ -25,8 +27,13 @@ export const getStaticProps = async () => {
   };
 };
 
-const HomeImg = styled.img`
-  width: 700px;
+const HomeImg = styled.div`
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  img {
+    width: 700px;
+  }
 `;
 
 export default Home;

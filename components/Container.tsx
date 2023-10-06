@@ -16,7 +16,7 @@ const Container = (props: any) => {
       <Head>
         <title>하은이의 블로그</title>
       </Head>
-      <Header>
+      <GNB>
         <Link href="/">
           <LogoImg src={metaData.logoUrl} alt="logo" />
         </Link>
@@ -24,8 +24,8 @@ const Container = (props: any) => {
         <title>{meta.title}</title>
         <meta content={meta.description} name="description" />
         <meta property="og:site_name" content={meta.author} />
-      </Header>
-      <main>{props.children}</main>
+      </GNB>
+      <StyledMain>{props.children}</StyledMain>
     </>
   );
 };
@@ -34,10 +34,15 @@ const LogoImg = styled.img`
   width: 100px;
 `;
 
-const Header = styled.header`
+const GNB = styled.header`
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 0.5rem;
 `;
+
+const StyledMain = styled.main`
+  padding: 30px;
+`;
+
 export default Container;
