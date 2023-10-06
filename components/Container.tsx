@@ -35,6 +35,12 @@ const LogoImg = styled.img`
 `;
 
 const GNB = styled.header`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: calc(100% - 16px);
+  height: 50px;
+  background-color: rgba(0, 0, 0, 0.2);
   display: flex;
   justify-content: space-between;
   align-items: center;
