@@ -2,11 +2,12 @@ import Container from "../components/Container";
 import BlogPosts from "@/components/BlogPosts";
 import { allPosts } from "@/.contentlayer/generated";
 import { InferGetStaticPropsType } from "next";
+import { styled } from "styled-components";
 
 const Blog = ({ posts }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <Container>
-      <div>Blog</div>
+      <Title>Blog</Title>
       {posts &&
         posts.map((post) => (
           <BlogPosts
@@ -32,4 +33,6 @@ export const getStaticProps = async () => {
     },
   };
 };
+
+const Title = styled.h2``;
 export default Blog;
