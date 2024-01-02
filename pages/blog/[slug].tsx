@@ -5,12 +5,13 @@ import { useMDXComponent } from "next-contentlayer/hooks";
 import { ParsedUrlQuery } from "querystring";
 
 const Post = ({ post }: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const MDXComponent = post && useMDXComponent(post.body.code);
+  // 각각의 글 렌더링
+  const MDXComponent = post && useMDXComponent(post.body.code); // useMDXComponent 훅을 사용해 마크다운 코드를 리액트 컴포넌트로 변환
   const customMeta = post && {
     title: post.title,
     description: post.description,
     date: new Date(post.date).toISOString(),
-  };
+  }; // 메타데이터를 설정하고 컨테이너로 전달해 메타데이터를 커스터마이징
   return (
     <Container customMeta={customMeta}>
       {MDXComponent && (
@@ -24,18 +25,20 @@ const Post = ({ post }: InferGetStaticPropsType<typeof getStaticProps>) => {
 };
 
 export const getStaticPaths = async () => {
+  // 어떤 경로들을 pre-rendering 할지 결정
   return {
-    paths: allPosts.map((p) => ({ params: { slug: p._raw.flattenedPath } })),
-    fallback: false,
+    paths: allPosts.map((p) => ({ params: { slug: p._raw.flattenedPath } })), // 동적경로 생성
+    fallback: false, // 없는 페이지는 404 에러
   };
 };
 
 export const getStaticProps = async ({
+  // 동적으로 생성된 페이지에 필요한 데이터 제공
   params,
 }: {
   params: ParsedUrlQuery;
 }) => {
-  const post = allPosts.find((p) => p._raw.flattenedPath === params.slug);
+  const post = allPosts.find((p) => p._raw.flattenedPath === params.slug); // 해당 글의 데이터를 찾아와 props로 반환
   return {
     props: {
       post,

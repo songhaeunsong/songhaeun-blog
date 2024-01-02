@@ -7,9 +7,9 @@ interface RecentPostsProps {
 }
 const RecentPosts: React.FC<RecentPostsProps> = ({ posts }) => {
   return (
-    <section>
+    <StyledContentsContainer>
       <h1>최근 게시물</h1>
-      <div>
+      <article>
         {posts.slice(0, 5).map((post) => (
           <StyledLink
             key={post._id}
@@ -21,10 +21,14 @@ const RecentPosts: React.FC<RecentPostsProps> = ({ posts }) => {
             <hr />
           </StyledLink>
         ))}
-      </div>
-    </section>
+      </article>
+    </StyledContentsContainer>
   );
 };
+
+const StyledContentsContainer = styled.div`
+  padding: 0 50px;
+`;
 
 const StyledLink = styled(Link)`
   color: #474e49;
@@ -42,5 +46,6 @@ const StyledLink = styled(Link)`
     font-size: 15px;
     margin: 5px 0;
   }
+  padding: 0 50px;
 `;
 export default RecentPosts;

@@ -32,7 +32,7 @@ const HomeImg = styled.div`
   display: flex;
   justify-content: center;
   img {
-    width: 700px;
+    width: 100%;
   }
 `;
 

@@ -3,6 +3,7 @@ import Link from "next/link";
 import Head from "next/head";
 import Nav from "./Nav";
 import metaData from "@/data/metaData";
+import { useState, useEffect } from "react";
 
 const Container = (props: any) => {
   const meta = {
@@ -11,12 +12,30 @@ const Container = (props: any) => {
     author: metaData.author,
     ...props.customMeta,
   };
+
+  const [scrolling, setScrolling] = useState(false);
+
+  const handleScroll = () => {
+    if (window.scrollY > 0) {
+      setScrolling(true);
+    } else {
+      setScrolling(false);
+    }
+  };
+
+  useEffect(() => {
+    window.addEventListener("scroll", handleScroll);
+    return () => {
+      window.removeEventListener("scroll", handleScroll);
+    };
+  }, []);
+
   return (
     <>
       <Head>
         <title>하은이의 블로그</title>
       </Head>
-      <GNB>
+      <GNB scrolling={scrolling}>
         <Link href="/">
           <LogoImg src={metaData.logoUrl} alt="logo" />
         </Link>
@@ -34,21 +53,24 @@ const LogoImg = styled.img`
   width: 100px;
 `;
 
-const GNB = styled.header`
+const GNB = styled.header<{ scrolling: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
   width: calc(100% - 16px);
   height: 50px;
-  background-color: rgba(0, 0, 0, 0.2);
+  background-color: ${(props) =>
+    props.scrolling ? "rgba(255, 255, 255, 0.8)" : "rgba(0, 0, 0, 0.2)"};
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 0.5rem;
+  transition: background-color 0.3s ease;
 `;
 
 const StyledMain = styled.main`
-  padding: 30px;
+  padding: 0px;
+  margin: 0;
 `;
 
 export default Container;
