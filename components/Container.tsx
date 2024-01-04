@@ -39,7 +39,7 @@ const Container = (props: any) => {
         <Link href="/">
           <LogoImg src={metaData.logoUrl} alt="logo" />
         </Link>
-        <Nav />
+        <Nav scrolling={scrolling} />
         <title>{meta.title}</title>
         <meta content={meta.description} name="description" />
         <meta property="og:site_name" content={meta.author} />
@@ -65,7 +65,7 @@ const GNB = styled.header<{ scrolling: boolean }>`
   justify-content: space-between;
   align-items: center;
   padding: 0 0.5rem;
-  transition: background-color 0.3s ease;
+  transition: ${(props) => props.theme.transition};
 `;
 
 const StyledMain = styled.main`

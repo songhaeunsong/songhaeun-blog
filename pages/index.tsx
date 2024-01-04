@@ -3,6 +3,8 @@ import styled from "styled-components";
 import RecentPosts from "@/components/RecentPosts";
 import { allPosts } from "@/.contentlayer/generated";
 import { InferGetStaticPropsType } from "next";
+import navLinks from "@/data/navLinks";
+import Link from "next/link";
 import metaData from "@/data/metaData";
 
 const Home = ({ posts }: InferGetStaticPropsType<typeof getStaticProps>) => {
@@ -11,6 +13,13 @@ const Home = ({ posts }: InferGetStaticPropsType<typeof getStaticProps>) => {
       <HomeImg>
         <img src={metaData.homeImg} alt="homeImg" />
       </HomeImg>
+      <HomeText>
+        Welcome to <br />
+        Haeun's BLOG! <br />
+        <Link href={navLinks[1].link} key={navLinks[1].title}>
+          <button>View Posts</button>
+        </Link>
+      </HomeText>
       <div>{posts && <RecentPosts posts={posts} />}</div>
     </Container>
   );
@@ -33,6 +42,33 @@ const HomeImg = styled.div`
   justify-content: center;
   img {
     width: 100%;
+  }
+`;
+
+const HomeText = styled.span`
+  position: absolute;
+  text-align: center;
+  top: 500px;
+  right: 90px;
+  color: white;
+  font-size: 70px;
+  font-family: Serif;
+
+  button {
+    padding: 13px 25px;
+    font-size: 26px;
+    border: none;
+    border-radius: 10px;
+    color: ${(props) => props.theme.whiteFontColor};
+    background-color: ${(props) => props.theme.pointColor};
+  }
+  button:hover {
+    background-color: ${(props) => props.theme.whiteFontColor};
+    color: ${(props) => props.theme.pointColor};
+    transition: ${(props) => props.theme.transition};
+  }
+  button:active {
+    opacity: 0.7;
   }
 `;
 
