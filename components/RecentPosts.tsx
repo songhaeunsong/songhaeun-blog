@@ -28,6 +28,12 @@ const RecentPosts: React.FC<RecentPostsProps> = ({ posts }) => {
 
 const StyledContentsContainer = styled.div`
   padding: 0 50px;
+
+  h1 {
+    margin-top: 150px;
+    font-weight: 300;
+    font-size: 30px;
+  }
 `;
 
 const StyledLink = styled(Link)`
