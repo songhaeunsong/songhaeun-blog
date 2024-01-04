@@ -22,14 +22,13 @@ const NavLink = styled(Link)<NavProps>`
   text-decoration-line: none;
   font-weight: 300;
   font-size: 17px;
-  color: ${(props) =>
-    props.scrolling ? props.theme.pointColor : props.theme.whiteFontColor};
+  color: ${(props) => (props.scrolling ? props.theme.pointColor : "white")};
   span {
     margin: 0 0.5rem;
   }
   span:hover {
-    ${(props) =>
-      props.scrolling ? props.theme.whiteFontColor : props.theme.pointColor};
+    text-decoration: underline;
+    text-decoration-thickness: 0.7px;
   }
 `;
 export default Nav;

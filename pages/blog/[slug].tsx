@@ -1,3 +1,4 @@
+import styled from "styled-components";
 import Container from "components/Container";
 import { allPosts } from "contentlayer/generated";
 import { InferGetStaticPropsType } from "next";
@@ -16,8 +17,10 @@ const Post = ({ post }: InferGetStaticPropsType<typeof getStaticProps>) => {
     <Container customMeta={customMeta}>
       {MDXComponent && (
         <div className="mt-10 prose">
-          <h1 className="text-sky-700">{post.title}</h1>
-          <MDXComponent />
+          <PostTitle className="text-sky-700">{post.title}</PostTitle>
+          <div style={{ padding: "0 50px" }}>
+            <MDXComponent />
+          </div>
         </div>
       )}
     </Container>
@@ -46,4 +49,9 @@ export const getStaticProps = async ({
   };
 };
 
+const PostTitle = styled.h2`
+  margin-top: 80px;
+  text-align: center;
+  font-size: 30px;
+`;
 export default Post;

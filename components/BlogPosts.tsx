@@ -20,23 +20,28 @@ const BlogPosts: React.FC<BlogPostProps> = ({ date, title, des, slug }) => {
   );
 };
 const StyledLink = styled(Link)`
-  color: #474e49;
+  color: ${(props) => props.theme.fontColor};
   text-decoration-line: none;
   hr {
-    border: 1px solid #c7cfc9;
+    border: 0.6px solid #c7cfc9;
   }
   span {
     font-size: 15px;
+    font-weight: 200;
     color: gray;
   }
   article {
+    margin-top: 4px;
     font-weight: 500;
     font-size: 20px;
+  }
+  article:hover {
+    color: ${(props) => props.theme.pointColor};
   }
   p {
     font-weight: 400;
     font-size: 15px;
-    margin: 5px 0;
+    margin: 7px 0;
   }
 `;
 export default BlogPosts;

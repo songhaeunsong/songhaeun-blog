@@ -23,6 +23,10 @@ body {
     rgb(var(--background-start-rgb));
 }
 */
+:root {
+  font-family: sans-serif, "Lucida Sans", "Lucida Sans Regular", "Lucida Grande",
+    "Lucida Sans Unicode", Geneva, Verdana;
+}
 body {
   padding: 0;
   margin: 0;

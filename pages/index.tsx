@@ -57,10 +57,13 @@ const HomeText = styled.span`
   button {
     padding: 13px 25px;
     font-size: 26px;
+    font-family: sans-serif;
+    font-weight: 100;
     border: none;
-    border-radius: 10px;
-    color: ${(props) => props.theme.whiteFontColor};
+    border-radius: 3px;
+    color: white;
     background-color: ${(props) => props.theme.pointColor};
+    opacity: 0.9;
   }
   button:hover {
     background-color: ${(props) => props.theme.whiteFontColor};
@@ -68,7 +71,7 @@ const HomeText = styled.span`
     transition: ${(props) => props.theme.transition};
   }
   button:active {
-    opacity: 0.7;
+    opacity: 0.6;
   }
 `;
 

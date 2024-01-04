@@ -9,7 +9,7 @@ const RecentPosts: React.FC<RecentPostsProps> = ({ posts }) => {
   return (
     <StyledContentsContainer>
       <h1>최근 게시물</h1>
-      <article>
+      <section>
         {posts.slice(0, 5).map((post) => (
           <StyledLink
             key={post._id}
@@ -21,7 +21,7 @@ const RecentPosts: React.FC<RecentPostsProps> = ({ posts }) => {
             <hr />
           </StyledLink>
         ))}
-      </article>
+      </section>
     </StyledContentsContainer>
   );
 };
@@ -34,12 +34,15 @@ const StyledLink = styled(Link)`
   color: #474e49;
   text-decoration-line: none;
   hr {
-    border: 1px solid #c7cfc9;
+    border: 0.5px solid #c7cfc9;
   }
 
   article {
     font-weight: 500;
     font-size: 20px;
+  }
+  article:hover {
+    color: ${(props) => props.theme.pointColor};
   }
   p {
     font-weight: 400;
