@@ -37,7 +37,7 @@ export const getStaticProps = async () => {
 };
 
 const StyledContentsContainer = styled.div`
-  padding: 0 50px;
+  padding: 0 30px;
 `;
 const Title = styled.h2`
   margin-top: 80px;

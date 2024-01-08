@@ -20,7 +20,7 @@ const Post = ({ post }: InferGetStaticPropsType<typeof getStaticProps>) => {
       {post && (
         <div className="mt-10 prose">
           <PostTitle className="text-sky-700">{post.title}</PostTitle>
-          <div style={{ padding: "0 50px" }}>
+          <div style={{ padding: "0 30px" }}>
             <MDXComponent />
           </div>
         </div>

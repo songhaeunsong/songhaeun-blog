@@ -3,7 +3,7 @@ User-agent: *
 Allow: /
 
 # Host
-Host: https://blog-haeun.com
+Host: https://songhaeun-blog.vercel.app
 
 # Sitemaps
-Sitemap: https://blog-haeun.com/sitemap.xml
+Sitemap: https://songhaeun-blog.vercel.app/sitemap.xml

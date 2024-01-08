@@ -77,6 +77,18 @@ const HomeText = styled.span`
   button:active {
     opacity: 0.6;
   }
+
+  @media screen and (max-width: 1300px) {
+    /* 화면 폭이 768px 이하인 경우에 적용할 스타일 */
+    top: 30vw;
+    right: 3vw;
+    font-size: 6vw;
+
+    button {
+      font-size: 2vw;
+      padding: 1vw 2vw;
+    }
+  }
 `;
 
 export default Home;
