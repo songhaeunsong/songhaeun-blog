@@ -2,5 +2,7 @@
 
 import post1Mdx from './post1.mdx.json' assert { type: 'json' }
 import post2Mdx from './post2.mdx.json' assert { type: 'json' }
+import post3Mdx from './post3.mdx.json' assert { type: 'json' }
+import post4Mdx from './post4.mdx.json' assert { type: 'json' }
 
-export const allPosts = [post1Mdx, post2Mdx]
+export const allPosts = [post1Mdx, post2Mdx, post3Mdx, post4Mdx]

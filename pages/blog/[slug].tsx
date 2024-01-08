@@ -7,7 +7,9 @@ import { ParsedUrlQuery } from "querystring";
 
 const Post = ({ post }: InferGetStaticPropsType<typeof getStaticProps>) => {
   // 각각의 글 렌더링
-  const MDXComponent = post && useMDXComponent(post.body.code); // useMDXComponent 훅을 사용해 마크다운 코드를 리액트 컴포넌트로 변환
+  const MDXComponent = useMDXComponent(post ? post.body.code : "");
+
+  // useMDXComponent 훅을 사용해 마크다운 코드를 리액트 컴포넌트로 변환
   const customMeta = post && {
     title: post.title,
     description: post.description,
@@ -15,7 +17,7 @@ const Post = ({ post }: InferGetStaticPropsType<typeof getStaticProps>) => {
   }; // 메타데이터를 설정하고 컨테이너로 전달해 메타데이터를 커스터마이징
   return (
     <Container customMeta={customMeta}>
-      {MDXComponent && (
+      {post && (
         <div className="mt-10 prose">
           <PostTitle className="text-sky-700">{post.title}</PostTitle>
           <div style={{ padding: "0 50px" }}>

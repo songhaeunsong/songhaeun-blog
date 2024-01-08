@@ -33,7 +33,9 @@ const Container = (props: any) => {
   return (
     <>
       <Head>
-        <title>하은이의 블로그</title>
+        <title>{meta.title}</title>
+        <meta content={meta.description} name="description" />
+        <meta property="og:site_name" content={meta.author} />
       </Head>
       <GNB scrolling={scrolling}>
         <Link href="/">

@@ -1,0 +1,87 @@
+---
+title: "[Leetcode] Range Sum of BST"
+date: 2024-01-08
+description: 리트코드 938번 문제를 풀면서 이진트리탐색을 js로 푸는 법을 살펴보고 정리해보자.
+---
+
+[Range Sum of BST](https://leetcode.com/problems/range-sum-of-bst/?envType=daily-question&envId=2024-01-08)
+
+Given the root node of a binary search tree and two integers low and high, return the sum of values of all nodes with a value in the inclusive range [low, high].
+
+#### Example 1:
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/2f812f6d-dd72-4c92-b965-b19a34f86409/image.png)
+
+Input: root = [10,5,15,3,7,null,18], low = 7, high = 15
+Output: 32
+Explanation: Nodes 7, 10, and 15 are in the range [7, 15]. 7 + 10 + 15 = 32.
+
+#### Example 2:
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/81d5f0c7-1672-4cb5-867f-db8714ede0ea/image.png)
+
+Input: root = [10,5,15,3,7,13,18,1,null,6], low = 6, high = 10
+Output: 23
+Explanation: Nodes 6, 7, and 10 are in the range [6, 10]. 6 + 7 + 10 = 23.
+
+이진탐색트리: 노드의 오른쪽 하위 트리에는 `노드의 값보다 큰 값`이 있는 노드만 포함되고, 왼쪽 하위 트리에는 `노드의 값보다 작은 값`이 들어 있는 트리
+
+### TreeNode
+
+TreeNode의 데이터 형식을 먼저 살펴보자.
+
+```js
+function TreeNode(val, left, right) {
+  this.val = val === undefined ? 0 : val;
+  this.left = left === undefined ? null : left;
+  this.right = right === undefined ? null : right;
+}
+```
+
+TreeNode는 속성으로 `val, left, right`을 가지고 있다.
+
+val: 노드가 저장하는 값. 생성자에서 주어진 값(val)이 없으면 기본값으로 0이 사용.
+left: 노드의 왼쪽 서브트리를 나타내는 또 다른 TreeNode 객체. 생성자에서 주어진 값(left)이 없으면 기본값으로 null이 사용.
+right: 노드의 오른쪽 서브트리를 나타내는 또 다른 TreeNode 객체. 생성자에서 주어진 값(right)이 없으면 기본값으로 null이 사용.
+
+1. "low와 high 사이에 해당하는 값이면 해당 값을 더하기
+2. 현재 노드의 값이 low보다 크면 좌측 서브트리를 탐색 (재귀함수)
+3. 현재 노드의 값이 high보다 작으면 우측 서브트리를 탐색 (재귀함수)
+4. 주어진 범위 내의 값들을 누적하여 반환하면 끝 !
+
+코드는 다음과 같이 완성했다.
+
+```js
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @param {number} low
+ * @param {number} high
+ * @return {number}
+ */
+var rangeSumBST = function (root, low, high) {
+  let sum = 0;
+  if (root === null) return sum;
+  if (root.val > low) {
+    sum += rangeSumBST(root.left, low, high);
+  }
+  if (root.val < high) {
+    sum += rangeSumBST(root.right, low, high);
+  }
+  if (root.val >= low && root.val <= high) {
+    sum += root.val;
+  }
+  return sum;
+};
+```
+
+TreeNode 형식이 내장되어있는 버전 말고 처음부터 만들어야하는 문제도 풀어보면서 연습해보아야겠다!
+
+파이팅😬

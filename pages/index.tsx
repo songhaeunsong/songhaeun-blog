@@ -5,17 +5,24 @@ import { allPosts } from "@/.contentlayer/generated";
 import { InferGetStaticPropsType } from "next";
 import navLinks from "@/data/navLinks";
 import Link from "next/link";
+import Image from "next/image";
 import metaData from "@/data/metaData";
 
 const Home = ({ posts }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <Container>
       <HomeImg>
-        <img src={metaData.homeImg} alt="homeImg" />
+        <Image
+          src={metaData.homeImg}
+          width={100}
+          height={100}
+          layout="responsive"
+          alt="homeImg"
+        />
       </HomeImg>
       <HomeText>
         Welcome to <br />
-        Haeun's BLOG! <br />
+        Haeun&apos;s BLOG! <br />
         <Link href={navLinks[1].link} key={navLinks[1].title}>
           <button>View Posts</button>
         </Link>
@@ -40,9 +47,6 @@ const HomeImg = styled.div`
   width: 100%;
   display: flex;
   justify-content: center;
-  img {
-    width: 100%;
-  }
 `;
 
 const HomeText = styled.span`

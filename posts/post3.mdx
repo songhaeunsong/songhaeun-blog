@@ -1,0 +1,101 @@
+---
+title: Next.js 요약 정리
+date: 2023-11-30
+description: 공식 문서를 기반으로 공부한 Next.js 핵심 정리
+---
+
+Next.js : React 기반의 프레임워크
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/330713bf-2993-4b5b-af01-0e1ac526cd1c/image.png)
+
+Next.js를 사용하면 리액트로 SSR 구현시 귀찮은 점들을 해결할 수 있다고 한다. (SDO 적용 수월)
+
+### create-next-app 과 Next.js
+
+- 컴파일과 번들링이 자동으로 된다.
+- 자동 리프래쉬 기능으로 수정 사항이 화면에 즉시 반영된다.
+- SSR 지원 (페이지 소스에서 확인 가능)
+- static 파일을 지원 (public 파일 밑에 생성)
+- 페이지 폴더 안에 파일만 만들어도 라우팅 처리가 가능하다.
+- 페이지 폴더 안에 폴더를 생성하고 `[id].js` 과 같은 대괄호 형식의 파일을 생성하면 ~/폴더명/3(임의의 값)을 검색했을 때 `[id].js`로 라우팅된다.
+
+### \_app.js
+
+- 레이아웃을 만들기 위해 사용한다.
+- 페이지 전환 시 상태 값 유지가 가능하다.
+- componentDidCatch를 이용해 커스텀 에러를 핸들링한다.\
+- 추가적인 데이터를 페이지로 주입시켜주는 것이 가능하다.
+  global css를 이곳에 선언한다.
+
+```
+function MyApp({component, pageProps})
+```
+
+component: 현재 페이지
+pageProps: 데이터 패칭 메서드를 통해 미리 가져올 초기 객체
+
+### App vs Docoment
+
+app: 레이아웃, 글로벌 css 불러옴
+document: 서버에서만 렌더링, onClick 같은 이벤트 핸들러 작동 X
+
+### Dynamic Routes
+
+- 대괄호 사용
+- 패키지 경로를 url 경로와 매핑해준다.
+
+```
+export default function Page({ params }: { params: { slug: string } }) {
+  return <div>My Post: {params.slug}</div>
+}
+```
+
+### Server Side Rendering
+
+Next.js는 모드 페이지를 사전 렌더링한다. (pre-rendering)
+이를 통해 검색엔진이 최적화 되고 퍼모먼스가 향상된다.\
+
+### pre-rendering
+
+1. 정적 생성
+2. SSR
+   -> `언제 html 파일을 생성하는가`를 통해 구분한다.
+
+#### 정적 생성
+
+- getStaticProps / getStaticPaths
+- 프로젝트가 빌드하는 시점에 html 파일들이 생성
+- 모든 요청에 재사용
+- 퍼포먼스 이유로, Next.js는 정적생성을 권고
+- 정적생성된 페이지들은 CDN에 캐시가 됨
+
+#### SSR
+
+- getServerSideProps
+- 매요청마다 html 생성
+- 항상 최신상태를 유지
+
+-> 유저가 요청 전에 페이지를 미리 생성해도 상관이 없으면 정적생성
+(ex. 마케팅 페이지, 도움말 문서, 블로그 페이지)
+
+### Next/link
+
+Next/link를 사용하면 페이지가 완전히 새로고침되지 않고 필요한 부분만 렌더링
+
+location.href 사용할 수도 있지만 요청이 늘어나 SPA의 장점이 사라지진다.
+
+```
+router.push()
+```
+
+### error
+
+- \_error.js: Next.js 에서 정적 제공 X, 에러 발생 시 서버쪽으로 에러를 동발하는 경우가 많기 때문이다.
+- 404.js: 정적제공 O, pages 아래 404.js 를 만들어 static으로 사용 가능하다. (파일을 만들지 않으면 기본적을 제공해주는 ui가 출력된다.)
+
+### 환경 변수
+
+1. node js 환경: process.env.변수명
+   -> getServerSideProps 내부에서 사용 (서버에서 동작)
+2. browser 환경: process.NEXT*PUBLIC*변수명
+   -> index.js에서 사용
