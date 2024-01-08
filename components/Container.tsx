@@ -10,6 +10,7 @@ const Container = (props: any) => {
     title: metaData.title,
     description: metaData.description,
     author: metaData.author,
+    icon: metaData.icons.icon,
     ...props.customMeta,
   };
 
@@ -36,6 +37,7 @@ const Container = (props: any) => {
         <title>{meta.title}</title>
         <meta content={meta.description} name="description" />
         <meta property="og:site_name" content={meta.author} />
+        <link rel="shortcut icon" href={meta.icon} />
       </Head>
       <GNB scrolling={scrolling}>
         <Link href="/">
