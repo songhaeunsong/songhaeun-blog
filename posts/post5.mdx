@@ -1,0 +1,101 @@
+---
+title: 트리 순회
+date: 2024-01-10
+description: 중위순회, 전위순회, 후위순회에 대해 알아보고 js로 구현해보자!
+---
+
+### 트리 순회(Tree Traversal)
+
+트리 구조에서 노드를 특정한 순서로 방문하는 방법
+
+3가지 방법으로 아래 트리를 순회해보자!
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/fcb66c23-9350-4287-a206-3c0194868e79/image.png)
+
+#### 중위 순회 (Inorder Traversal)
+
+Left > Root > Right
+
+`D-B-E-A-F-C-G`
+
+#### 전위 순회 (Preorder Traversal)
+
+Root > Left > Right
+
+`A-B-D-E-C-F-G`
+
+#### 후위 순회 (Postorder Traversal)
+
+Left > right > Root
+
+`D-E-B-F-G-C-A`
+
+### 트리 구현
+
+Node class
+
+```jsx
+class Node {
+  constructor() {
+    this.left = null;
+    this.value = null;
+    this.right = null;
+  }
+}
+```
+
+Tree class
+
+```js
+class Tree {
+  constructor() {
+    this.root = null; // 트리의 루트 노드
+  }
+
+  // 루트를 설정하는 메서드
+  setRoot(node) {
+    this.root = node;
+  }
+
+  // 트리의 루트를 가져오는 메서드
+  getRoot() {
+    return this.root;
+  }
+
+  // 새로운 노드를 생성하는 메서드
+  makeNode(left, value, right) {
+    const node = new Node();
+    node.left = left;
+    node.value = value;
+    node.right = right;
+    return node;
+  }
+
+  // 중위 순회
+  inorderTraversal(node) {
+    if (node !== null) {
+      this.inorder(node.left);
+      console.log(node.value);
+      this.inorder(node.right);
+    }
+  }
+
+  // 전위 순회
+  preorderTraversal(node) {
+    if (node !== null) {
+      console.log(node.value);
+      this.inorder(node.left);
+      this.inorder(node.right);
+    }
+  }
+
+  // 후위 순회
+  postorderTraversal(node) {
+    if (node !== null) {
+      this.inorder(node.left);
+      this.inorder(node.right);
+      console.log(node.value);
+    }
+  }
+}
+```
