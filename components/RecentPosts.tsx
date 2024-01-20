@@ -30,7 +30,7 @@ const StyledContentsContainer = styled.div`
   padding: 0 30px;
 
   h1 {
-    margin-top: 150px;
+    margin-top: 120px;
     font-weight: 300;
     font-size: 30px;
   }

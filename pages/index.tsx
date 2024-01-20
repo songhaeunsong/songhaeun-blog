@@ -52,7 +52,7 @@ const HomeImg = styled.div`
 const HomeText = styled.span`
   position: absolute;
   text-align: center;
-  top: 500px;
+  top: 32vw;
   right: 90px;
   color: white;
   font-size: 70px;
@@ -79,8 +79,7 @@ const HomeText = styled.span`
   }
 
   @media screen and (max-width: 1300px) {
-    /* 화면 폭이 768px 이하인 경우에 적용할 스타일 */
-    top: 30vw;
+    top: 29vw;
     right: 3vw;
     font-size: 6vw;
 
