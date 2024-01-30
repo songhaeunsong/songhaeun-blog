@@ -13,8 +13,8 @@ const BlogPosts: React.FC<BlogPostProps> = ({ date, title, des, slug }) => {
   return (
     <StyledLink href={`/blog/${slug.flattenedPath}`} passHref>
       <span>{date}</span>
-      <article>게시글 제목: {title}</article>
-      <p>게시글 내용: {des}</p>
+      <article>{title}</article>
+      <p>{des}</p>
       <hr />
     </StyledLink>
   );

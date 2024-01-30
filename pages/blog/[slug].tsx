@@ -18,12 +18,12 @@ const Post = ({ post }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <Container customMeta={customMeta}>
       {post && (
-        <div className="mt-10 prose">
+        <PostContent className="mt-10 prose">
           <PostTitle className="text-sky-700">{post.title}</PostTitle>
-          <div style={{ padding: "0 30px" }}>
-            <MDXComponent />
-          </div>
-        </div>
+          <article>
+            <MDXComponent style={{ width: "80%" }} />
+          </article>
+        </PostContent>
       )}
     </Container>
   );
@@ -55,5 +55,29 @@ const PostTitle = styled.h2`
   margin-top: 80px;
   text-align: center;
   font-size: 30px;
+`;
+
+const PostContent = styled.div`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background-color: ${(props) => props.theme.whiteFontColor};
+
+  article {
+    padding: 30px;
+    width: 55vw;
+    background-color: white;
+    border-radius: 5px;
+
+    img {
+      max-width: 100%;
+      height: auto;
+    }
+    @media screen and (max-width: 900px) {
+      width: 80vw;
+    }
+  }
 `;
 export default Post;
