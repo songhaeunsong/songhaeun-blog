@@ -52,7 +52,7 @@ const HomeImg = styled.div`
 const HomeText = styled.span`
   position: absolute;
   text-align: center;
-  top: 32vw;
+  top: 32.5vw;
   right: 90px;
   color: white;
   font-size: 70px;
@@ -79,7 +79,7 @@ const HomeText = styled.span`
   }
 
   @media screen and (max-width: 1300px) {
-    top: 23vw;
+    top: 25vw;
     right: 3vw;
     font-size: 6vw;
 
