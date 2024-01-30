@@ -1,0 +1,323 @@
+---
+title: Sass & SCSS 문법 총정리(1)
+date: 2024-01-30
+description: 중첩 / 선택자 / 주석 / 연산자 / 변수
+---
+
+Sass는 CSS 확장언어이다.
+
+까먹지 않기 위해 scss 사용법을 정리 해보려 한다.
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/902831d7-f630-474e-95ac-635de1875568/image.png)
+
+## 1. 중첩과 선택자
+
+### 중첩(Nesting)
+
+- 선택자나 속성의 관계를 중첩 형태로 표현하는 문법이다.
+- 상위 선택자의 반복을 피할 수 있다.
+- 선택자를 중첩:`규칙 중첩`, css 속성 중첩: `속성 중첩`
+
+* 규칙중첩
+
+- 구조를 한눈에 보기 쉽다.
+- depth를 3 이상 사용할 경우, 재활용성이 제한적이다. => 별개의 클래스를 만드는 것을 추천
+
+> SASS 코드
+
+```
+#gnb {
+    background-color: #fff;
+    width: 200px;
+    ul {
+        display: flex;
+        color: #111;
+    }
+}
+```
+
+> css 컴파일 코드
+
+```
+#gnb {
+  background-color: #fff;
+  width: 200px;
+}
+#gnb ul {
+  display: flex;
+  color: #111;
+}
+```
+
+- 속성 중첩
+
+* css의 공통된 네임 스페이스 속성을 중첩하는 문법
+  ex) `font`-family, `font`-size, `font`-style, `font`-weight
+
+> SASS 코드
+
+```
+h1 {
+    font: {
+        family: 'Malgun Gothic';
+        size: 25px;
+        style: normal;
+        weight: bold;
+    }
+    line-height: 1;
+}
+```
+
+> css 컴파일 코드
+
+```
+h1 {
+  font-family: 'Malgun Gothic';
+  font-size: 25px;
+  font-style: normal;
+  font-weight: bold;
+  line-height: 1;
+}
+```
+
+### 특수 선택자
+
+CSS 문법과 동일한 선택자 외에 특수 선택자 2가지 기능을 제공
+`부모 참조 선택자`, `플레이스홀더 선택자`
+
+`부모 참조 선택자`
+중첩 안에서 '&(Ampersand)'를 사용해 상위 엘리먼트를 참조
+
+1. 부모 참조 선택자를 부모 엘리먼트와 결합하여 사용하는 방법
+   > SASS 코드
+
+```
+.btn {
+    color: #000;
+    &.active {
+        color:coral;
+    }
+}
+.list_gnb {
+    li {
+        &:first-child {
+            margin-left: 0;
+        }
+    }
+}
+div {
+    &[class^='section_'] {
+        background-color: #ccc;
+    }
+}
+```
+
+> css 컴파일 코드
+
+```
+.btn {
+  color: #000;
+}
+.btn.active {
+  color: coral;
+}
+.list_gnb li:first-child {
+  margin-left: 0;
+}
+div[class^='section_'] {
+  background-color: #ccc;
+}
+```
+
+2. 부모 참조 선택자를 하위 자식 선택자로 이동하여 사용하는 방법
+
+> SASS 코드
+
+```
+.list_gnb {
+    li {
+        &:first-child {
+            margin-left: 0;
+        }
+        div.section & {
+            margin-left: 20px;
+        }
+    }
+}
+```
+
+> css 컴파일 코드
+
+```
+.list_gnb li:first-child {
+  margin-left: 0;
+}
+div.section .list_gnb li {
+  margin-left: 20px;
+}
+```
+
+`플레이스홀더 선택자`
+@extend로 호출하며 `%(Percent)`를 사용해 함수나 변수를 사용하듯이 내가 원하는 요소에 불러와 사용할 수 있음
+
+> SASS 코드
+
+```
+h1, %title-type {
+    color: #000;
+}
+h2 {
+    @extend %title-type;
+}
+```
+
+> css 컴파일 코드
+
+```
+h1, h2 {
+  color: #000;
+}
+```
+
+## 2. 주석과 연산자
+
+### 주석
+
+CSS 표준 문법과 동일하게 `//` 인라인(한 줄) 주석과 `/* */` 블록(여러 줄) 주석을 기능을 지원
+
+#### 인라인 주석
+
+컴파일된 CSS 파일에 출력되지 않음.
+
+#### 블록 주석
+
+컴파일하는 스타일에 따라 다르게 나타남.
+
+`nested`, `expanded`는 주석 그대로 컴파일
+`compact`는 여러 줄로 주석을 작성하였더라도 주석이 한 줄로 컴파일
+
+`compressed`는 CSS 파일에 주석이 노출되지 않지만 `/*!      */` 문법으로 작성하면 주석이 삭제되지 않고 노출 가능
+
+- 주석에 변수를 삽입할 수 있다.
+
+>
+
+```
+$author_n1: 'SHE';
+$author_n2: 'CJW';
+$author_n3: 'PKL';
+/* Malgun Communication Web Standard Team Author #{$author_n1}, #{$author_n2}, #{$author_n3} */
+```
+
+### 연산자
+
+사칙 연산자, 비교 연산자, 논리 연산자 사용 가능
+
+사칙 연산자(+, -, \*, /)
+
+- /(나누기) 사용 시 괄호로 감싸야한다.
+  => 감싸지 않으면 연산이 되지 않고 연산자만 컴파일
+
+>
+
+```
+width: 500px + 500px;
+```
+
+비교 연산자(>, ==, !== 등)
+논리 연산자(and, or, not)
+
+>
+
+```
+$width: 50px;
+.box {
+    @if not ($width > 100px) {
+        height: 200px;
+    }
+}
+```
+
+## 3. 변수
+
+문자열, 숫자, 색상, 불리언(true, false), 리스트(Array), null 을 `$변수명 : 값;` 의 문법 형태로 작성하여 사용
+
+>
+
+```
+$color-red: #ff0000;
+```
+
+변수의 유효 범위( Variables Scope)
+
+- 전역 변수: 문서의 최상위 위치. => 어떠한 규칙에도 포함되지 않으며, 문서 어디서나 사용 가능
+- 지역 변수: 선언된 블록 코드 { } 내에서만 유효 범위를 가짐
+  => BUT 지역 변수에 !global 플래그를 사용하면 전역 변수로 사용 가능
+
+>
+
+```
+div {
+    $color-red: #ff0000; //지역 변수
+    $width: 50% !global; // !global 전역 변수
+    color: $color-red;
+}
+p {
+    width: $width;
+}
+```
+
+변수는 재할당 가능
+
+>
+
+```
+$width: 100%;
+$box-width: $width;
+>
+.box-width {
+    width: $box-width;
+}
+```
+
+!default
+할당되지 않은 변수의 초기값을 설정 가능
+
+> SASS 코드
+
+```
+$color-base: pink;
+>
+.box {
+    $color-base: orange !default;
+    color: $color-base;
+}
+```
+
+> css 컴파일 코드
+
+```
+.box {
+  color: pink;
+}
+```
+
+#{ } (변수 문자 보간)
+`#{  }` 를 이용하여 어디서든 변수값을 문자열로 넣을 수 있음
+
+>
+
+```
+$value25: 25;
+$value77: 77;
+>
+// 숫자값인 변수를 + 연결하면 연산되어 102 값이 나옴
+.box-variables {
+    width: $value25 + $value77 + px;
+}
+>
+// 문자 보간으로 변수를 + 연결하면 문자값인 2577 값이 나옴
+.box-string_v2 {
+    width: #{$value25} + #{$value77} + px;
+}
+```

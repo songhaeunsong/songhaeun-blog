@@ -79,7 +79,7 @@ const HomeText = styled.span`
   }
 
   @media screen and (max-width: 1300px) {
-    top: 20vw;
+    top: 23vw;
     right: 3vw;
     font-size: 6vw;
 
