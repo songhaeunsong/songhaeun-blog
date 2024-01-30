@@ -1,0 +1,89 @@
+---
+title: "[BaekJoon]11675 단절점과 단절선"
+date: 2024-01-22
+description: 정점과 간선 정보를 통해 트리를 그리고 단절점과 단절선에 대해 알아보기
+---
+
+#### 트리(tree) : 사이클이 존재하지 않으며, 모든 정점이 연결되어 있는 그래프
+
+#### 단절점(cut vertex) : 해당 정점을 제거하였을 때, 그 정점이 포함된 그래프가 2개 이상으로 나뉘는 경우, 이 정점을 단절점이라 한다.
+
+#### 단절선(bridge) : 해당 간선을 제거하였을 때, 그 간선이 포함된 그래프가 2개 이상으로 나뉘는 경우, 이 간선을 단절선이라 한다.
+
+> ##### input
+
+> 5 --------(정점 개수)
+
+> 1 2 ------(간선)
+
+> 2 3
+
+> 3 4
+
+> 4 5
+
+> 4 --------(질의 개수)
+
+> 1 1 ------(t, k)
+
+> 1 2 ------(t === 1 => k는 단절점인가?)
+
+> 2 1 ------(t === 2 => k번재 간선은 단절선인가?)
+
+> 2 2
+
+정점 2,3,4을 제거하였을 때, 그 정점이 포함된 그래프가 2개 이상으로 나뉜다.
+
+한 정점을 기준으로 간선으로 연결되는 다른 정점을 정리해보자
+
+> 1: [2]
+
+> 2: [1, 3]
+
+> 3: [2, 4]
+
+> 4: [3, 5]
+
+> 5: [4]
+
+#### => 간선으로 연결된 점이 2개 이상이면 단절점!
+
+아무 선을 단절선으로 삼아도 그래프가 2개이상으로 나뉜다. 그래프가 사이클을 가져야 끊어지지 않는다.
+
+#### => 트리는 사이클을 가지지 않으므로 무조건 단절선!
+
+알아낸 이 두가지 사실로 금방 풀이할 수 있었다.
+
+```
+
+
+const fs = require("fs");
+const fileContent = fs.readFileSync(0).toString().trim().split("\n");
+
+const edgeNum = Number(fileContent[0]);
+const edges = fileContent.slice(1, edgeNum);
+const queries = fileContent.slice(edgeNum + 1);
+
+const graph = Array.from({ length: edgeNum + 1 }, () => []);
+edges.forEach((edge) => {
+const [from, to] = edge.split(" ").map(Number);
+graph[from].push(to);
+graph[to].push(from);
+});
+
+let result = "";
+queries.forEach((query) => {
+const [t, k] = query.split(" ").map(Number);
+if (t === 1) {
+result += graph[k].length > 1 ? "yes\n" : "no\n";
+} else {
+result += "yes\n";
+}
+});
+
+console.log(result);
+
+
+```
+
+참고로 이번 풀이는 trim을 하지 않으면 틀렸다고 뜬다 억울행....ㅡ.,ㅡ
