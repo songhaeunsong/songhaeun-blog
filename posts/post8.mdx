@@ -1,0 +1,166 @@
+---
+title: Sass & SCSS 문법 총정리(2)
+date: 2024-02-02
+description: @if / @for / @each / @while / @mixin / @extend / @import
+---
+
+## 조건문과 반복문 (@if, @for)
+
+### 조건문 @if
+
+- 기본적으로 다음과 같은 형식을 따름
+
+  ```
+  //기본 @if 지시문
+  @if(조건식) {
+  //조건이 참일 때 표현식
+  }
+  ```
+
+  ```
+  //@if @else문
+  @if(조건식) {
+    //조건이 참일 때 표현식
+  } @else {
+    //조건이 거짓일 때 표현식
+  }
+  ```
+
+  ```
+  //다중 @if문
+  @if(조건식1) {
+  	//조건식1이 참일 때 표현식
+  } @else if(조건식2) {
+  	//조건식2가 참일 때 표현식
+  } @else {
+  	//조건식이 모두 거짓일 때 표현식
+  }
+  ```
+
+- 조건식에 ( ) 생략하여 작성이 가능
+- 조건식에 논리 연산자 and, or, not을 사용 가능
+
+### 반복문 @for
+
+@for
+
+- `through` 를 사용하는 형식
+- `to` 를 사용하는 형식
+
+#### through 를 사용하는 형식
+
+=> from(시작)부터 through(종료) 조건까지 반복
+
+#### to 를 사용하는 형식
+
+=> from(시작)부터 to(종료) 조건 직전까지 반복
+
+<hr />
+
+## @each, @while
+
+### @each
+
+@each 는 List 와 Map 데이터를 반복할 때 사용
+(자바스크립트 for in 반복문과 비슷함)
+
+> List와 Map
+> 여러 개의 데이터를 저장할 때에는 list 또는 map을 사용해 편리하게 관리할 수 있음
+
+#### List
+
+데이터들을 연관된 것끼리 모아서 하나의 변수에 저장함
+$fruits : (apple, banana, mango, orange)
+
+#### Map
+
+List 와 비슷하지만 각 값마다 매칭 된 키가 있다는 특징이 있음
+$coffees : (mild: americano, soft: latte, strong: espresso, sweet: mocha)
+
+@each list data 반복문
+
+```
+//List Data
+$fruits : (apple, banana, mango, orange);
+
+.list_fruits {
+  @each $fruit in $fruits {
+      li.#{$fruit} {
+          background: url('../img/#{fruit}.png');
+      }
+  }
+}
+```
+
+@each index 값이 필요할 경우 => 내장 함수 문법
+
+```
+//List Data
+$fruits : (apple, banana, mango, orange);
+.list_fruits {
+  @each $fruit in $fruits {
+      $i : index($fruits, $fruit);
+      li:nth-child(#{$i}) {
+          left: 100px * $i;
+      }
+  }
+}
+```
+
+@each Map Data
+
+```
+// Map Data
+$coffees : (mild: americano, soft: latte, strong: espresso, sweet: mocha);
+
+@each $state, $menu in $coffees {
+  #{$state}-icon {
+      background: url('../img/#{$menu}.png');
+  }
+}
+```
+
+### @while
+
+@while 은 조건이 false 를 반환할 때까지 내용을 반복할 때 사용
+
+```
+$i : 6;
+
+@while $i > 0 {
+   .list-#{$i} {
+       width: 2px * $i;
+   }
+   $i : $i - 2;
+}
+```
+
+<hr />
+
+## @mixin, @extend, @import
+
+### @mixin
+
+mixin(믹스인)은 함수와 비슷한 동작을 하는 문법
+CSS 스타일 시트에서 반복적으로 재사용할 CSS 스타일 그룹 선언을 정의하는 기능
+
+반복되는 CSS 속성을 한 개의 mixin(믹스인) 정의를 가지고 다양한 CSS 스타일을 만들어 낼 수 있음
+
+- 정의 : @mixin 믹스인 이름 { CSS 스타일 }
+- 호출 : @include 믹스인 이름
+
+인수(Arguments)
+mixin은 함수처럼 인수를 가질 수 있음
+=> 하나의 mixin을 정의해도 다양한 결과 도출 가능
+
+사용방법: 믹스인에서 매개변수를 지정해주고 include로 인수를 사용
+
+'매개변수'란 변수의 한 종류로, 제공되는 여러 데이터 중 하나를 가리키기 위해 사용
+
+제공되는 여러 데이터들을 '전달인수'라고 함
+
+### @extend
+
+Sass Guideline 에서도 @extend는 사용을 권장x
+
+### @import
