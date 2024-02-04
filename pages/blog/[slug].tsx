@@ -70,11 +70,13 @@ const PostContent = styled.div`
     width: 55vw;
     background-color: white;
     border-radius: 5px;
+    overflow: auto;
 
     img {
       max-width: 100%;
       height: auto;
     }
+
     @media screen and (max-width: 900px) {
       width: 80vw;
     }
