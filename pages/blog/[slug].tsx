@@ -76,9 +76,11 @@ const PostContent = styled.div`
       max-width: 100%;
       height: auto;
     }
-
+    code {
+      color: #49676b;
+    }
     @media screen and (max-width: 900px) {
-      width: 80vw;
+      width: 75vw;
     }
   }
 `;
