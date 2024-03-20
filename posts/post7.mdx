@@ -25,20 +25,20 @@ Sass는 CSS 확장언어이다.
 
 SASS 코드
 
-```
+```scss
 #gnb {
-    background-color: #fff;
-    width: 200px;
-    ul {
-        display: flex;
-        color: #111;
-    }
+  background-color: #fff;
+  width: 200px;
+  ul {
+    display: flex;
+    color: #111;
+  }
 }
 ```
 
 css 컴파일 코드
 
-```
+```scss
 #gnb {
   background-color: #fff;
   width: 200px;
@@ -56,23 +56,23 @@ css 컴파일 코드
 
 SASS 코드
 
-```
+```scss
 h1 {
-    font: {
-        family: 'Malgun Gothic';
-        size: 25px;
-        style: normal;
-        weight: bold;
-    }
-    line-height: 1;
+  font: {
+    family: "Malgun Gothic";
+    size: 25px;
+    style: normal;
+    weight: bold;
+  }
+  line-height: 1;
 }
 ```
 
 css 컴파일 코드
 
-```
+```scss
 h1 {
-  font-family: 'Malgun Gothic';
+  font-family: "Malgun Gothic";
   font-size: 25px;
   font-style: normal;
   font-weight: bold;
@@ -92,30 +92,30 @@ CSS 문법과 동일한 선택자 외에 특수 선택자 2가지 기능을 제�
 
 SASS 코드
 
-```
+```scss
 .btn {
-    color: #000;
-    &.active {
-        color:coral;
-    }
+  color: #000;
+  &.active {
+    color: coral;
+  }
 }
 .list_gnb {
-    li {
-        &:first-child {
-            margin-left: 0;
-        }
+  li {
+    &:first-child {
+      margin-left: 0;
     }
+  }
 }
 div {
-    &[class^='section_'] {
-        background-color: #ccc;
-    }
+  &[class^="section_"] {
+    background-color: #ccc;
+  }
 }
 ```
 
 css 컴파일 코드
 
-```
+```scss
 .btn {
   color: #000;
 }
@@ -125,7 +125,7 @@ css 컴파일 코드
 .list_gnb li:first-child {
   margin-left: 0;
 }
-div[class^='section_'] {
+div[class^="section_"] {
   background-color: #ccc;
 }
 ```
@@ -134,22 +134,22 @@ div[class^='section_'] {
 
 SASS 코드
 
-```
+```scss
 .list_gnb {
-    li {
-        &:first-child {
-            margin-left: 0;
-        }
-        div.section & {
-            margin-left: 20px;
-        }
+  li {
+    &:first-child {
+      margin-left: 0;
     }
+    div.section & {
+      margin-left: 20px;
+    }
+  }
 }
 ```
 
 css 컴파일 코드
 
-```
+```scss
 .list_gnb li:first-child {
   margin-left: 0;
 }
@@ -163,19 +163,21 @@ div.section .list_gnb li {
 
 SASS 코드
 
-```
-h1, %title-type {
-    color: #000;
+```scss
+h1,
+%title-type {
+  color: #000;
 }
 h2 {
-    @extend %title-type;
+  @extend %title-type;
 }
 ```
 
 css 컴파일 코드
 
-```
-h1, h2 {
+```scss
+h1,
+h2 {
   color: #000;
 }
 ```
@@ -201,10 +203,10 @@ CSS 표준 문법과 동일하게 `//` 인라인(한 줄) 주석과 `/* */` 블�
 
 - 주석에 변수를 삽입할 수 있다.
 
-```
-$author_n1: 'SHE';
-$author_n2: 'CJW';
-$author_n3: 'PKL';
+```scss
+$author_n1: "SHE";
+$author_n2: "CJW";
+$author_n3: "PKL";
 /* Malgun Communication Web Standard Team Author #{$author_n1}, #{$author_n2}, #{$author_n3} */
 ```
 
@@ -217,19 +219,19 @@ $author_n3: 'PKL';
 - /(나누기) 사용 시 괄호로 감싸야한다.
   => 감싸지 않으면 연산이 되지 않고 연산자만 컴파일
 
-```
+```scss
 width: 500px + 500px;
 ```
 
 비교 연산자(>, ==, !== 등)
 논리 연산자(and, or, not)
 
-```
+```scss
 $width: 50px;
 .box {
-    @if not ($width > 100px) {
-        height: 200px;
-    }
+  @if not($width > 100px) {
+    height: 200px;
+  }
 }
 ```
 
@@ -237,7 +239,7 @@ $width: 50px;
 
 문자열, 숫자, 색상, 불리언(true, false), 리스트(Array), null 을 `$변수명 : 값;` 의 문법 형태로 작성하여 사용
 
-```
+```scss
 $color-red: #ff0000;
 ```
 
@@ -247,25 +249,25 @@ $color-red: #ff0000;
 - 지역 변수: 선언된 블록 코드 { } 내에서만 유효 범위를 가짐
   => BUT 지역 변수에 !global 플래그를 사용하면 전역 변수로 사용 가능
 
-```
+```scss
 div {
-    $color-red: #ff0000; //지역 변수
-    $width: 50% !global; // !global 전역 변수
-    color: $color-red;
+  $color-red: #ff0000; //지역 변수
+  $width: 50% !global; // !global 전역 변수
+  color: $color-red;
 }
 p {
-    width: $width;
+  width: $width;
 }
 ```
 
 변수는 재할당 가능
 
-```
+```scss
 $width: 100%;
 $box-width: $width;
 
 .box-width {
-    width: $box-width;
+  width: $box-width;
 }
 ```
 
@@ -274,18 +276,18 @@ $box-width: $width;
 
 SASS 코드
 
-```
+```scss
 $color-base: pink;
 
 .box {
-    $color-base: orange !default;
-    color: $color-base;
+  $color-base: orange !default;
+  color: $color-base;
 }
 ```
 
 css 컴파일 코드
 
-```
+```scss
 .box {
   color: pink;
 }
@@ -294,17 +296,17 @@ css 컴파일 코드
 #{ } (변수 문자 보간)
 `#{  }` 를 이용하여 어디서든 변수값을 문자열로 넣을 수 있음
 
-```
+```scss
 $value25: 25;
 $value77: 77;
 
 // 숫자값인 변수를 + 연결하면 연산되어 102 값이 나옴
 .box-variables {
-    width: $value25 + $value77 + px;
+  width: $value25 + $value77 + px;
 }
 
 // 문자 보간으로 변수를 + 연결하면 문자값인 2577 값이 나옴
 .box-string_v2 {
-    width: #{$value25} + #{$value77} + px;
+  width: #{$value25} + #{$value77} + px;
 }
 ```

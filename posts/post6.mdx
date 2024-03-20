@@ -54,9 +54,7 @@ description: 정점과 간선 정보를 통해 트리를 그리고 단절점과 
 
 알아낸 이 두가지 사실로 금방 풀이할 수 있었다.
 
-```
-
-
+```js
 const fs = require("fs");
 const fileContent = fs.readFileSync(0).toString().trim().split("\n");
 
@@ -66,24 +64,22 @@ const queries = fileContent.slice(edgeNum + 1);
 
 const graph = Array.from({ length: edgeNum + 1 }, () => []);
 edges.forEach((edge) => {
-const [from, to] = edge.split(" ").map(Number);
-graph[from].push(to);
-graph[to].push(from);
+  const [from, to] = edge.split(" ").map(Number);
+  graph[from].push(to);
+  graph[to].push(from);
 });
 
 let result = "";
 queries.forEach((query) => {
-const [t, k] = query.split(" ").map(Number);
-if (t === 1) {
-result += graph[k].length > 1 ? "yes\n" : "no\n";
-} else {
-result += "yes\n";
-}
+  const [t, k] = query.split(" ").map(Number);
+  if (t === 1) {
+    result += graph[k].length > 1 ? "yes\n" : "no\n";
+  } else {
+    result += "yes\n";
+  }
 });
 
 console.log(result);
-
-
 ```
 
 참고로 이번 풀이는 trim을 하지 않으면 틀렸다고 뜬다 억울행....ㅡ.,ㅡ

@@ -4,24 +4,48 @@ import { allPosts } from "contentlayer/generated";
 import { InferGetStaticPropsType } from "next";
 import { useMDXComponent } from "next-contentlayer/hooks";
 import { ParsedUrlQuery } from "querystring";
+import CodeBlock from "@/components/CodeBlock";
+import "github-markdown-css/github-markdown-light.css";
 
+interface TProps {
+  node?: unknown;
+  inline?: boolean;
+  className?: string;
+  children?: React.ReactNode;
+}
 const Post = ({ post }: InferGetStaticPropsType<typeof getStaticProps>) => {
+  const components = {
+    code({ node, inline, className, children, ...props }: TProps) {
+      const match = /language-(\w+)/.exec(className || "");
+      return !inline && match ? (
+        <CodeBlock
+          value={String(children).replace(/\n$/, "")}
+          language={match[1]}
+          {...props}
+        />
+      ) : (
+        <code className={className} {...props}>
+          {children}
+        </code>
+      );
+    },
+  };
   // 각각의 글 렌더링
   const MDXComponent = useMDXComponent(post ? post.body.code : "");
 
-  // useMDXComponent 훅을 사용해 마크다운 코드를 리액트 컴포넌트로 변환
   const customMeta = post && {
     title: post.title,
     description: post.description,
     date: new Date(post.date).toISOString(),
   }; // 메타데이터를 설정하고 컨테이너로 전달해 메타데이터를 커스터마이징
+
   return (
     <Container customMeta={customMeta}>
       {post && (
-        <PostContent className="mt-10 prose">
-          <PostTitle className="text-sky-700">{post.title}</PostTitle>
-          <article>
-            <MDXComponent style={{ width: "80%" }} />
+        <PostContent>
+          <PostTitle>{post.title}</PostTitle>
+          <article className="markdown-body">
+            <MDXComponent style={{ width: "80%" }} components={components} />
           </article>
         </PostContent>
       )}
@@ -75,9 +99,6 @@ const PostContent = styled.div`
     img {
       max-width: 100%;
       height: auto;
-    }
-    code {
-      color: #49676b;
     }
     @media screen and (max-width: 900px) {
       width: 75vw;

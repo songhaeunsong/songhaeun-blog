@@ -12,30 +12,30 @@ description: "@if / @for / @each / @while / @mixin / @extend / @import"
 
 - 기본적으로 다음과 같은 형식을 따름
 
-  ```
+  ```scss
   //기본 @if 지시문
-  @if(조건식) {
-  //조건이 참일 때 표현식
+  @if (조건식) {
+    //조건이 참일 때 표현식
   }
   ```
 
-  ```
+  ```scss
   //@if @else문
-  @if(조건식) {
+  @if (조건식) {
     //조건이 참일 때 표현식
   } @else {
     //조건이 거짓일 때 표현식
   }
   ```
 
-  ```
+  ```scss
   //다중 @if문
-  @if(조건식1) {
-  	//조건식1이 참일 때 표현식
+  @if (조건식1) {
+    //조건식1이 참일 때 표현식
   } @else if(조건식2) {
-  	//조건식2가 참일 때 표현식
+    //조건식2가 참일 때 표현식
   } @else {
-  	//조건식이 모두 거짓일 때 표현식
+    //조건식이 모두 거짓일 때 표현식
   }
   ```
 
@@ -81,43 +81,48 @@ $coffees : (mild: americano, soft: latte, strong: espresso, sweet: mocha)
 
 @each list data 반복문
 
-```
+```scss
 //List Data
-$fruits : (apple, banana, mango, orange);
+$fruits: (apple, banana, mango, orange);
 
 .list_fruits {
   @each $fruit in $fruits {
-      li.#{$fruit} {
-          background: url('../img/#{fruit}.png');
-      }
+    li.#{$fruit} {
+      background: url("../img/#{fruit}.png");
+    }
   }
 }
 ```
 
 @each index 값이 필요할 경우 => 내장 함수 문법
 
-```
+```scss
 //List Data
-$fruits : (apple, banana, mango, orange);
+$fruits: (apple, banana, mango, orange);
 .list_fruits {
   @each $fruit in $fruits {
-      $i : index($fruits, $fruit);
-      li:nth-child(#{$i}) {
-          left: 100px * $i;
-      }
+    $i: index($fruits, $fruit);
+    li:nth-child(#{$i}) {
+      left: 100px * $i;
+    }
   }
 }
 ```
 
 @each Map Data
 
-```
+```scss
 // Map Data
-$coffees : (mild: americano, soft: latte, strong: espresso, sweet: mocha);
+$coffees: (
+  mild: americano,
+  soft: latte,
+  strong: espresso,
+  sweet: mocha,
+);
 
 @each $state, $menu in $coffees {
   #{$state}-icon {
-      background: url('../img/#{$menu}.png');
+    background: url("../img/#{$menu}.png");
   }
 }
 ```
@@ -126,14 +131,14 @@ $coffees : (mild: americano, soft: latte, strong: espresso, sweet: mocha);
 
 @while 은 조건이 false 를 반환할 때까지 내용을 반복할 때 사용
 
-```
-$i : 6;
+```scss
+$i: 6;
 
 @while $i > 0 {
-   .list-#{$i} {
-       width: 2px * $i;
-   }
-   $i : $i - 2;
+  .list-#{$i} {
+    width: 2px * $i;
+  }
+  $i: $i - 2;
 }
 ```
 
@@ -151,14 +156,14 @@ CSS 스타일 시트에서 `반복적으로 재사용할 CSS 스타일 그룹 �
 - 정의 `@mixin 믹스인 이름 { CSS 스타일 }`
 - 호출 `@include 믹스인 이름`
 
-```
+```scss
 //@mixin - 스타일 정의
 @mixin 믹스인 이름 {
-	//CSS 스타일 내용
+  //CSS 스타일 내용
 }
 
 //@include - 믹스인 호출
-@include 믹스인 이름
+@include 믹스인 이름;
 ```
 
 인수(Arguments)
@@ -167,10 +172,10 @@ mixin은 함수처럼 인수를 가질 수 있음
 
 사용방법: 믹스인에서 매개변수를 지정해주고 include로 인수를 사용
 
-```
+```scss
 //정의
 @mixin 믹스인 이름($매개변수) {
-	//CSS 스타일 내용
+  //CSS 스타일 내용
 }
 
 //호출
@@ -183,13 +188,17 @@ mixin은 함수처럼 인수를 가질 수 있음
 
 #### @mixin 예시 코드
 
-```
+```scss
 @mixin border-line($width, $style) {
-    border: $width $style #000;
+  border: $width $style #000;
 }
 
-.border-box1 {@include border-line(2px, solid);}
-.border-box2 {@include border-line(4px, dotted);}
+.border-box1 {
+  @include border-line(2px, solid);
+}
+.border-box2 {
+  @include border-line(4px, dotted);
+}
 ```
 
 ### @extend
@@ -202,16 +211,16 @@ mixin은 함수처럼 인수를 가질 수 있음
 
 #### @extend 예시 코드
 
-```
+```scss
 .btn {
-    padding: 10 15px;
-    font-size: 15px;
-    background-color: blue;
+  padding: 10 15px;
+  font-size: 15px;
+  background-color: blue;
 }
 
 .lightBtn {
-    @extend .btn;
-    background-color: #000;
+  @extend .btn;
+  background-color: #000;
 }
 ```
 
@@ -225,9 +234,8 @@ mixin은 함수처럼 인수를 가질 수 있음
 
 CSS @import는 사용할 때마다 http 호출을 매번 하기때문에 속도 저하를 가져올 수 있지만, Sass @import는 CSS로 컴파일하여 바로 처리하기 때문에 http 호출이 필요하지 않아 속도 저하 문제를 발생시키지 않는다.
 
-```
-@import '파일경로/파일명'
-@import 'font.scss' // scss일 경우 생략 가능
+```scss
+@import "파일경로/파일명" @import "font.scss"; // scss일 경우 생략 가능
 ```
 
 꿀팁!
@@ -238,6 +246,6 @@ CSS @import는 사용할 때마다 http 호출을 매번 하기때문에 속도 
 
 - 하나의 @import로 여러 파일을 불러올 수 있다. => 파일을 ',' 로 구분하여 import 한다.
 
-```
-@import '_mixin', 'header';
+```scss
+@import "_mixin", "header";
 ```
