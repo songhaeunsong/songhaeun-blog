@@ -1,0 +1,209 @@
+---
+title: MDXComponent에 react-syntax-highlighter 적용하기
+date: 2024-03-20
+description: "MDX 파일을 React 컴포넌트로 변환한 MDXComponent에 react-syntax-highlighter 적용해서 코드 하이라이트 기능을 만들자"
+---
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/380e5bf2-d4a1-4f2c-99f4-2cea3f5ae13b/image.png)
+
+내가 만든 블로그는 코드와 글이 구분되지 않는 상태였다. 가독성도 안 좋고 밋밋해보인다.
+그래서 UX의 향상을 위해 `react-syntax-highlighter`를 사용하여 Code Highlight를 적용해보려고 한다.
+
+> 목표: MDX 파일을 React 컴포넌트로 변환한 MDXComponent에 react-syntax-highlighter 적용하기!
+
+## Why react-syntax-highlighter?
+
+- React 기반 프로젝트에서 코드 하이라이트를 쉽게 구현할 수 있도록 도와주는 라이브러리이다.
+- Prism과 Highlight.js 두 가지 하이라이트 엔진을 지원
+
+> 1.  코드 하이라이팅 기능을 React 컴포넌트 형태로 제공
+
+React 프로젝트 내에서 자연스럽게 통합되며, React의 생명주기 관리, 상태 관리 등과 잘 호환된다.
+
+> 2.  Props를 통한 쉬운 설정
+
+props를 통해 하이라이터의 설정을 쉽게 변경할 수 있어, 옵션을 손쉽게 조정할 수 있다.
+
+> 3.  JSX 지원
+
+JSX 코드를 직접 하이라이팅할 수 있습니다. Prism이나 Highlight.js를 직접 사용할 때보다 훨씬 간편한 방법을 제공한다.
+
+> 4.  커스텀 스타일링
+
+style props를 통해 코드 블록의 스타일을 쉽게 수정하고 조정할 수 있다.
+
+> 5.  성능 최적화
+
+불필요한 리렌더링을 방지하기 위한 최적화가 포함되어 있으며, 필요한 코드 하이라이팅 스크립트만을 로드하여 페이지의 로드 시간을 단축시킬 수 있다.
+
+## react-syntax-highlighter 적용하기
+
+### 1. react-syntax-highlighter 설치
+
+```js
+npm install react-syntax-highlighter
+```
+
+### 2. `<code>`태그를 대신할 CodeBlock 컴포넌트 만들기
+
+```js
+import { FC } from "react";
+import { Prism as SyntaxHighlighter } from "react-syntax-highlighter";
+import { materialOceanic } from "react-syntax-highlighter/dist/cjs/styles/prism";
+
+interface TProps {
+  language: string;
+  value: string;
+}
+
+const CodeBlock: FC<TProps> = ({ language, value }) => {
+  return (
+    <SyntaxHighlighter language={language} style={materialOceanic}>
+      {value}
+    </SyntaxHighlighter>
+  );
+};
+
+export default CodeBlock;
+```
+
+- 하이라이팅 엔진 `Prism`과 하이라이팅에 적용될 테마 `materialOceanic` import하기
+
+- CodeBlock 컴포넌트를 만들고 속성으로 `language`와 `style` 넣어주기
+  - language: 하이라이트할 코드의 언어
+  - value: 실제로 하이라이트할 코드 내용
+
+### 3. MDX 컴포넌트 내에서 CodeBlock 사용하기
+
+#### 3-1. 컴포넌트 객체 생성하기
+
+```js
+const components = {
+  code({ node, inline, className, children, ...props }: any) {
+    const match = /language-(\w+)/.exec(className || "");
+    return !inline && match ? (
+      <CodeBlock
+        value={String(children).replace(/\n$/, "")}
+        language={match[1]}
+        {...props}
+      />
+    ) : (
+      <code className={className} {...props}>
+        {children}
+      </code>
+    );
+  },
+};
+```
+
+- code 함수: 마크다운에서 코드 블록 또는 인라인 코드를 렌더링할 때 호출된다. 구조 분해 할당을 사용하여 `node, inline, className, children, ...props` 파라미터를 정의한다.
+
+  - node: 마크다운의 코드 블록 또는 인라인 코드를 처리
+  - className: 마크다운에서 지정된 언어에 따라 language-xxx 형식의 클래스 이름을 가진다.
+  - children: 코드 블록 내의 실제 코드 내용
+  - inline은 보통 백틱 한 쌍으로 감싸진 코드를 의미한다. (boolean 값)
+
+- match: `/language-(\w+)/.exec(className || "")`를 사용하여 className에서 language- 접두사를 포함하는 언어 식별자를 추출한다.
+  (코드 하이라이팅을 적용할 언어를 결정하는 데 사용)
+
+- 조건부 렌더링: 코드 멀티라인 코드 블록에 대해 `CodeBlock` 컴포넌트를 사용하여 렌더링하고, 그렇지 않은 경우 기본 HTML `<code>` 태그를 사용하여 코드를 렌더링한다.
+  - value prop: 코드 내용(children), 이때 `replace(/\n$/, "")`를 사용해 마지막 개행 문자는 제거해준다.
+  - language prop: 프로그래밍 언어
+
+#### 3-2. MDXComponent에 components 속성으로 넣어주면 끝!
+
+```js
+<MDXComponent components={components} />
+```
+
+### 전체 코드
+
+```js
+...
+import CodeBlock from "@/components/CodeBlock";
+
+const Post = ({ post }: InferGetStaticPropsType<typeof getStaticProps>) => {
+
+  const components = {
+    code({ node, inline, className, children, ...props }: any) {
+      const match = /language-(\w+)/.exec(className || "");
+      return !inline && match ? (
+        <CodeBlock
+          value={String(children).replace(/\n$/, "")}
+          language={match[1]}
+          {...props}
+        />
+      ) : (
+        <code className={className} {...props}>
+          {children}
+        </code>
+      );
+    },
+  };
+
+const MDXComponent = useMDXComponent(post ? post.body.code : "");
+
+  const customMeta = post && {
+    title: post.title,
+    description: post.description,
+    date: new Date(post.date).toISOString(),
+  };
+
+  return (
+    <Container customMeta={customMeta}>
+      {post && (
+        <PostContent>
+          <PostTitle>{post.title}</PostTitle>
+          <article className="markdown-body">
+            <MDXComponent components={components} />
+          </article>
+        </PostContent>
+      )}
+    </Container>
+  );
+};
+
+export const getStaticPaths = async () => {
+  return {
+    paths: allPosts.map((p) => ({ params: { slug: p._raw.flattenedPath } })),
+    fallback: false,
+  };
+};
+
+export const getStaticProps = async ({
+  params,
+}: {
+  params: ParsedUrlQuery;
+}) => {
+  const post = allPosts.find((p) => p._raw.flattenedPath === params.slug);
+  return {
+    props: {
+      post,
+    },
+  };
+};
+
+export default Post;
+```
+
+<br />
+
+### 구현 화면
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/6ebd2764-997f-4e04-a085-cbb6ad170655/image.png)
+
+### cf. Highlight.js 말고 Prism을 사용한 이유
+
+: 내 블로그는 거의 JS만 사용하기 때문에 `Prism`을 사용했다.
+
+> Prism
+
+- Prism은 자체적으로 경량이라는 장점이 있다.
+- 웹사이트에 적용하기 위한 단계가 비교적 간단하다.
+- Highlight.js에 비해 지원하는 언어 수는 적다.
+
+> Highlight.js
+
+- Highlight.js는 180개 이상의 프로그래밍 언어와 다양한 스타일을 지원한다.
+- 자동 언어 감지 기능이 있다.
+- 웹사이트의 로딩 속도가 더 느릴 수 있다.
