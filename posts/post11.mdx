@@ -1,0 +1,71 @@
+---
+title: useState 중복을 custom Hook으로 만들기(js)
+date: 2024-02-20
+description: "useState 코드가 중복되는 경우에는 커스텀 훅을 활용해 중복을 제거할 수 있다"
+---
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/b6e44e42-4b13-4aed-82a0-94a9cffd63f6/image.png)
+
+다음과 같이 코드가 중복되는 경우에는 커스텀 훅을 활용해 중복을 제거할 수 있다.
+
+```js
+const [email, setEmail] = useState("");
+const [nickname, setNickname] = useState("");
+
+const onChangeEmail = useCallback((e) => {
+  setEmail(e.target.value);
+}, []);
+
+const onChangeNickname = useCallback((e) => {
+  setNickname(e.target.value);
+}, []);
+```
+
+hooks 폴더 안에 useInput이라는 커스텀 훅을 만들어 중복을 제거해보자
+
+```js
+import { useCallback, useState } from "react";
+
+const useInput = (initialData) => {
+  const [value, setValue] = useState(initialData);
+
+  const handler = useCallback((e) => {
+    setValue(e.target.value);
+  }, []);
+  return [value, handler, setValue];
+};
+
+export default useInput;
+```
+
+이렇게 커스텀훅을 만들어 준 후, 기존 중복됐던 코드를 변경해주자!
+
+기존 코드
+
+```js
+  const [email, setEmail] = useState('');
+  const [nickname, setNickname] = useState('');
+ >
+  const onChangeEmail = useCallback((e) => {
+    setEmail(e.target.value);
+  }, []);
+
+  const onChangeNickname = useCallback((e) => {
+    setNickname(e.target.value);
+  }, []);
+```
+
+커스텀 훅 적용 후
+
+```js
+import useInput from "@hook/useInput"; // 커스텀 훅 파일 경로
+
+const [email, onchangeEmail, setEmail] = useInput("");
+const [nickname, onChangeNickname, setNickname] = useInput("");
+```
+
+나의 경우는 setEmail과 setNickname가 필요없어서 아래처럼 적어 작업했다.
+
+```js
+const [email, onchangeEmail] = useInput("");
+```
