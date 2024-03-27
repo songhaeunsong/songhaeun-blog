@@ -1,0 +1,105 @@
+---
+title: "[알고리즘]라인 스위핑(Line Sweeping)"
+date: 2024-03-27
+description: 이중for문으로 작성한 교차점 찾기 문제를 라인스위핑으로 바꿔보자.
+---
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/508f6cda-267e-4bfc-b647-b0de08adc09b/image.png)
+
+이중 for문으로 풀었던 문제 [NumberOfDiscIntersections](https://app.codility.com/programmers/lessons/6-sorting/number_of_disc_intersections/)를 `라인 스위핑`을 사용해서 고쳐보았다.
+
+#### 이중 for문으로 작성한 코드(라인 스위핑 적용 전)
+
+```js
+function solution(A) {
+  let answer = 0;
+  const point = [];
+  for (let i = 0; i < A.length; i++) {
+    const [start, end] = [i - A[i], i + A[i]];
+    point.push([start, end]);
+  }
+
+  point.sort((a, b) => a[0] - b[0] || b[1] - a[1]);
+
+  for (let i = 0; i < point.length; i++) {
+    for (let j = i + 1; j < point.length; j++) {
+      if (point[i][1] < point[j][0]) continue;
+      answer++;
+    }
+  }
+  return answer;
+}
+```
+
+시간 복잡도가 O(n\*\*2) 여서 이걸 줄여보고자 `라인 스위핑`을 사용했다.
+
+### 라인 스위핑 알고리즘
+
+라인 스위핑(Line Sweeping) 알고리즘은 말 그대로 `선 하나를 여러 가지 상황에서 움직이면서` 문제를 해결하는 방법이다.
+
+스위프트(빗자루)가 평면을 가로지르면서 이벤트를 처리하는 방식을 모방한 것으로, 이러한 접근 방식 때문에 '라인 스위핑'이라는 이름이 붙었다. 일반적으로 평면 상의 선이나 구간과 관련된 문제를 해결하는 데 사용된다.
+
+### 사용 예시와 시간 복잡도
+
+선분 교차, 겹치는 구간 찾기, 최근접 점 쌍 찾기 등의 문제에 사용되며,
+보통 O(n log n)의 시간 복잡도를 가진다.
+
+### 라인 스위핑을 사용해 수정한 코드
+
+```js
+function solution(A) {
+  let answer = 0;
+  const point = [];
+  for (let i = 0; i < A.length; i++) {
+    const [start, end] = [i - A[i], i + A[i]];
+    point.push([start, 1]);
+    point.push([end, -1]);
+  }
+
+  point.sort((a, b) => a[0] - b[0] || b[1] - a[1]);
+
+  let active = 0;
+  let intersections = 0;
+  for (let i = 0; i < point.length; i++) {
+    if (point[i][1] === 1) {
+      intersections += active;
+    }
+    if (intersections > 10000000) return -1;
+    active += point[i][1];
+  }
+  return intersections;
+}
+```
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/031d1b6a-eebb-4f15-9c67-4713efe2ed95/image.png)
+
+라인 스위핑으로 수정한 후 O(N\*log(N)) or O(N)의 시간 복잡도를 갖는 것을 볼 수 있었다.
+
+### 어려웠던 점
+
+이전에 백준 [강의실 배정](https://www.acmicpc.net/problem/11000) 문제에서 active된 강의실의 최댓값을 찾는 데 라인 스위핑을 사용했었다.
+
+아래 코드에서 알 수 있듯이, 교차되는 시간이 가장 클때만 기록하고 나머지 값은 시경쓰지 않아도 됐었다.
+active에 1 또는 -1 를 집어넣기만 하면 되는 간단한 스위핑이었다.
+
+```js
+for (let i = 0; i < room.length; i++) {
+  active += room[i][1];
+  max = Math.max(active, max);
+}
+```
+
+하지만 내가 고치려던 문제는 교차되는 디스크 쌍의 총 개수를 구하는 문제라 어려웠다.
+(몇개 겹치는지 계속 기록해야함 ㅠㅠ)
+
+점이 선의 시작점이라면 현재 활성 디스크 수를 교차되는 디스크 수에 추가하고, 그렇지 않으면 활성 디스크 수를 증가시키는 방법을 사용했다.
+point[i][1] === -1 일 때(디스크의 끝나는 점)는 교차되는 디스크 수에 추가하지 않도록 주의해서 풀이했다.
+
+```js
+for (let i = 0; i < point.length; i++) {
+  if (point[i][1] === 1) {
+    intersections += active;
+  }
+  active += point[i][1];
+}
+```
