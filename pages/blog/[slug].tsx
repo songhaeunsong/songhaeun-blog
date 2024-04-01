@@ -4,34 +4,12 @@ import { allPosts } from "contentlayer/generated";
 import { InferGetStaticPropsType } from "next";
 import { useMDXComponent } from "next-contentlayer/hooks";
 import { ParsedUrlQuery } from "querystring";
-import CodeBlock from "@/components/CodeBlock";
 import "github-markdown-css/github-markdown-light.css";
+import { CustomComponents } from "@/components/CustomComponents";
 
-interface TProps {
-  node?: unknown;
-  inline?: boolean;
-  className?: string;
-  children?: React.ReactNode;
-}
 const Post = ({ post }: InferGetStaticPropsType<typeof getStaticProps>) => {
-  const components = {
-    code({ node, inline, className, children, ...props }: TProps) {
-      const match = /language-(\w+)/.exec(className || "");
-      return !inline && match ? (
-        <CodeBlock
-          value={String(children).replace(/\n$/, "")}
-          language={match[1]}
-          {...props}
-        />
-      ) : (
-        <code className={className} {...props}>
-          {children}
-        </code>
-      );
-    },
-  };
-  // 각각의 글 렌더링
   const MDXComponent = useMDXComponent(post ? post.body.code : "");
+  const customComponents = CustomComponents({});
 
   const customMeta = post && {
     title: post.title,
@@ -45,7 +23,10 @@ const Post = ({ post }: InferGetStaticPropsType<typeof getStaticProps>) => {
         <PostContent>
           <PostTitle>{post.title}</PostTitle>
           <article className="markdown-body">
-            <MDXComponent style={{ width: "80%" }} components={components} />
+            <MDXComponent
+              style={{ width: "80%" }}
+              components={customComponents}
+            />
           </article>
         </PostContent>
       )}
