@@ -11,6 +11,7 @@ const Home = ({ posts }: InferGetStaticPropsType<typeof getStaticProps>) => {
     <Container>
       <HomeText>
         Welcome to Haeun&apos;s BLOG! <br />
+        <p>웹 프론트엔드 공부하는 송하은입니다.</p>
       </HomeText>
       <div>{posts && <RecentPosts posts={posts} />}</div>
       <ButtonLink href={navLinks[1].link} key={navLinks[1].title}>
@@ -37,6 +38,10 @@ const HomeText = styled.span`
   color: ${(props) => props.theme.pointColor};
   font-size: 50px;
   font-family: Serif;
+  p {
+    font-size: 20px;
+    font-family: "Arial Narrow";
+  }
 
   @media screen and (max-width: 1300px) {
     font-size: 6vw;
