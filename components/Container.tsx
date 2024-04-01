@@ -48,7 +48,9 @@ const Container = (props: any) => {
         <meta content={meta.description} name="description" />
         <meta property="og:site_name" content={meta.author} />
       </GNB>
-      <StyledMain>{props.children}</StyledMain>
+      <Background>
+        <StyledMain>{props.children}</StyledMain>
+      </Background>
     </>
   );
 };
@@ -73,9 +75,22 @@ const GNB = styled.header<{ scrolling: boolean }>`
   transition: ${(props) => props.theme.transition};
 `;
 
-const StyledMain = styled.main`
+const Background = styled.div`
   padding: 0px;
   margin: 0;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  background-color: ${(props) => props.theme.whiteFontColor};
+`;
+
+const StyledMain = styled.main`
+  width: 55vw;
+  padding: 30px 30px 200px 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 `;
 
 export default Container;

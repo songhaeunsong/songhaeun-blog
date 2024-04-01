@@ -15,6 +15,7 @@ const Blog = ({ posts }: InferGetStaticPropsType<typeof getStaticProps>) => {
               date={post.date}
               title={post.title}
               des={post.description}
+              img={post.img}
               slug={post._raw}
               key={post._id}
             />
@@ -36,9 +37,7 @@ export const getStaticProps = async () => {
   };
 };
 
-const StyledContentsContainer = styled.div`
-  padding: 0 30px;
-`;
+const StyledContentsContainer = styled.div``;
 const Title = styled.h2`
   margin-top: 80px;
   text-align: center;

@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Post } from "@/.contentlayer/generated";
 import { styled } from "styled-components";
+import PostItem from "./PostItem";
 
 interface RecentPostsProps {
   posts: Post[];
@@ -16,9 +17,12 @@ const RecentPosts: React.FC<RecentPostsProps> = ({ posts }) => {
             href={`/blog/${post._raw.flattenedPath}`}
             passHref
           >
-            <article>{post.title}</article>
-            <p>{post.description}</p>
-            <hr />
+            <PostItem
+              date={post.date}
+              title={post.title}
+              description={post.description}
+              img={post.img}
+            />
           </StyledLink>
         ))}
       </section>
@@ -27,10 +31,8 @@ const RecentPosts: React.FC<RecentPostsProps> = ({ posts }) => {
 };
 
 const StyledContentsContainer = styled.div`
-  padding: 0 30px;
-
   h1 {
-    margin-top: 120px;
+    margin: 120px 0 50px 0;
     font-weight: 300;
     font-size: 30px;
   }
@@ -39,22 +41,5 @@ const StyledContentsContainer = styled.div`
 const StyledLink = styled(Link)`
   color: #474e49;
   text-decoration-line: none;
-  hr {
-    border: 0.5px solid #c7cfc9;
-  }
-
-  article {
-    font-weight: 500;
-    font-size: 20px;
-  }
-  article:hover {
-    color: ${(props) => props.theme.pointColor};
-  }
-  p {
-    font-weight: 400;
-    font-size: 15px;
-    margin: 5px 0;
-  }
-  padding: 0 50px;
 `;
 export default RecentPosts;
