@@ -71,8 +71,8 @@ const PostContent = styled.div`
   background-color: ${(props) => props.theme.whiteFontColor};
 
   article {
+    width: 100%;
     padding: 30px;
-    width: 55vw;
     background-color: white;
     border-radius: 5px;
     overflow: auto;
