@@ -39,9 +39,10 @@ export const getStaticProps = async () => {
 
 const StyledContentsContainer = styled.div``;
 const Title = styled.h2`
-  margin-top: 80px;
+  color: ${(prop) => prop.theme.pointColor};
   text-align: center;
   font-weight: 300;
-  font-size: 30px;
+  font-size: min(30px, 7vw);
+  margin-top: 0;
 `;
 export default Blog;

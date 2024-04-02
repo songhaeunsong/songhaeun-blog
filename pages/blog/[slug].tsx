@@ -23,10 +23,7 @@ const Post = ({ post }: InferGetStaticPropsType<typeof getStaticProps>) => {
         <PostContent>
           <PostTitle>{post.title}</PostTitle>
           <article className="markdown-body">
-            <MDXComponent
-              style={{ width: "80%" }}
-              components={customComponents}
-            />
+            <MDXComponent components={customComponents} />
           </article>
         </PostContent>
       )}
@@ -57,9 +54,9 @@ export const getStaticProps = async ({
 };
 
 const PostTitle = styled.h2`
-  margin-top: 80px;
   text-align: center;
-  font-size: 30px;
+  font-size: min(30px, 5vw);
+  margin-top: 0;
 `;
 
 const PostContent = styled.div`
@@ -82,7 +79,8 @@ const PostContent = styled.div`
       height: auto;
     }
     @media screen and (max-width: 900px) {
-      width: 75vw;
+      width: 90vw;
+      padding: 10px;
     }
   }
 `;

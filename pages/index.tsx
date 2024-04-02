@@ -15,7 +15,7 @@ const Home = ({ posts }: InferGetStaticPropsType<typeof getStaticProps>) => {
       </HomeText>
       <div>{posts && <RecentPosts posts={posts} />}</div>
       <ButtonLink href={navLinks[1].link} key={navLinks[1].title}>
-        <button>View More Posts</button>
+        <button>More Posts</button>
       </ButtonLink>
     </Container>
   );
@@ -33,18 +33,13 @@ export const getStaticProps = async () => {
 };
 
 const HomeText = styled.span`
-  margin-top: 80px;
   text-align: center;
   color: ${(props) => props.theme.pointColor};
-  font-size: 50px;
+  font-size: min(50px, 6vw);
   font-family: Serif;
   p {
-    font-size: 20px;
+    font-size: min(20px, 4vw);
     font-family: "Arial Narrow";
-  }
-
-  @media screen and (max-width: 1300px) {
-    font-size: 6vw;
   }
 `;
 
@@ -62,8 +57,8 @@ const ButtonLink = styled(Link)`
     margin-top: 30px;
 
     @media screen and (max-width: 1300px) {
-      font-size: 2vw;
-      padding: 1vw 2vw;
+      font-size: 6vw;
+      padding: 2vw 4vw;
     }
   }
   button:hover {

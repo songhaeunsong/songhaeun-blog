@@ -32,9 +32,10 @@ const RecentPosts: React.FC<RecentPostsProps> = ({ posts }) => {
 
 const StyledContentsContainer = styled.div`
   h1 {
-    margin: 120px 0 50px 0;
+    color: ${(prop) => prop.theme.pointColor};
+    margin: 5vw 0 3vw 5px;
     font-weight: 300;
-    font-size: 30px;
+    font-size: min(4vw, 25px);
   }
 `;
 

@@ -32,8 +32,9 @@ const StyledContainer = styled.div`
   background-color: white;
   margin-bottom: 20px;
   border-radius: 10px;
+
   > div {
-    padding-right: 20px;
+    padding-right: 1vw;
   }
 
   & :hover {
@@ -55,5 +56,24 @@ const StyledContainer = styled.div`
     font-weight: 400;
     font-size: 15px;
   }
+
+  @media screen and (max-width: 900px) {
+    padding: 20px;
+    flex-direction: column-reverse;
+    > div {
+      width: 100%;
+    }
+    span {
+      font-size: 15px;
+    }
+    article {
+      margin-top: 10px;
+      font-size: 18px;
+    }
+    p {
+      font-size: 13px;
+    }
+  }
 `;
+
 export default PostItem;
