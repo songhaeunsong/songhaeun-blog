@@ -8,7 +8,7 @@ const Blog = ({ posts }: InferGetStaticPropsType<typeof getStaticProps>) => {
   return (
     <Container>
       <StyledContentsContainer>
-        <Title>Blog</Title>
+        <Title>전체 게시글</Title>
         {posts &&
           posts.map((post) => (
             <BlogPosts

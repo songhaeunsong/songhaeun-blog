@@ -15,7 +15,7 @@ const Home = ({ posts }: InferGetStaticPropsType<typeof getStaticProps>) => {
       </HomeText>
       <div>{posts && <RecentPosts posts={posts} />}</div>
       <ButtonLink href={navLinks[1].link} key={navLinks[1].title}>
-        <button>More Posts</button>
+        <button>전체 게시글 보기</button>
       </ButtonLink>
     </Container>
   );
