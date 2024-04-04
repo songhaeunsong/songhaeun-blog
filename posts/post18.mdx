@@ -1,0 +1,81 @@
+---
+title: "next/image 반응형으로 만들기"
+date: 2024-04-03
+description: next/image의 fill 속성을 활용하여, 가로세로의 비율은 유지하면서 화면 너비에 따라 이미지 크기 조절하기
+img: https://velog.velcdn.com/images/songhaeunsong/post/ff42acfd-f411-4cc0-a0d7-938ff30601ca/image.png
+---
+
+이미지 최적화를 위해 next/image를 사용하던 중 반응형 웹을 구현하는 과정에서 문제가 발생했다.
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/ff42acfd-f411-4cc0-a0d7-938ff30601ca/image.png)
+
+### 문제 발생
+
+next/image을 사용해, 가로 세로의 비율은 유지하면서 화면 너비에 따라 이미지가 작아지게끔 구현하고자 했지만 next/image의 필수 속성(그리고 타입)문제로 평소 알던 방법으로 반응형을 구현할 수 없었다.
+
+### next/image의 필수 props 확인
+
+next/image를 반응형으로 구현하기에 앞서 next/image의 필수 props를 알아보자.
+![](https://velog.velcdn.com/images/songhaeunsong/post/f080fa5d-756a-4a11-9c5e-1e1178232910/image.png)
+src, width, height, alt가 필수속성으로 들어가야 함을 알 수 있다.
+
+그런데 여기서 width, height의 타입이 Integer (px)인것이 문제가 된다.
+상대적인 단위(%, vw 등)를 적용할 수 없기 때문이다.
+
+### 해결 방법
+
+그럼 next/image를 반응형으로 구현하려면 어떻게 해야할까?
+
+=> _ fill 속성을 사용해서 부모 컴포넌트 크기에 맞춘다!_
+
+> #### fill이 뭔가요?
+>
+> 이미지를 부모 요소에 완전히 채우도록 지정하는 속성이다.
+> 이때, 원본 이미지의 비율은 유지되지 않고, 늘어나거나 줄어들어 부모 요소의 전체 공간을 차지하는 것이 특징이다.
+
+> #### fill의 특징
+>
+> [fill 에 대한 공식 문서](https://nextjs.org/docs/pages/api-reference/components/image#fill)에 따르면 fill의 특징은 다음과 같다.
+>
+> 1. fill은 width, height 와 함께 쓸 수 없다.(fill을 쓰면 width, height 생략해야 한다.)
+>
+> 2. fill를 작성할 경우, `position: "absolute"` 스타일이 자동 적용된다.
+>    따라서 상위 요소는
+>    position: "relative"
+>    position: "fixed"
+>    position: "absolute"
+>    중 하나를 작성해주어야 한다. (안쓰면 이미지가 부모를 못 찾음...)
+
+### 적용하기
+
+1. `부모요소`를 만들어준다.
+2. next/image 의 Image 태그에 `fill` 을 작성한다.
+3. `objectFit="cover"` 속성도 함께 작성한다.
+4. 부모요소의 스타일에 `position: relative`를 해준다.
+5. 부모요소의 스타일에 `aspect-ratio: 가로/세로` 를 해준다.
+
+- objectFit="cover": 이미지가 부모 요소에 맞게 확대 또는 축소됨. 부모 요소를 완전히 덮음
+- aspect-ratio 속성: 가로 세로 비율을 지정
+
+### 완성 코드
+
+```js
+const CustomImage: FC<TProps> = ({ src, alt }) => {
+  return (
+    <ImageWrapper>
+      <Image src={src} alt={alt} fill objectFit="cover" />
+    </ImageWrapper>
+  );
+};
+
+const ImageWrapper = styled.div`
+  position: relative;
+  height: 130px;
+  aspect-ratio: 4/3;
+`;
+
+export default CustomImage;
+```
+
+이렇게 해서 next/image를 사용하면서도
+가로 세로의 비율은 유지하면서 화면 너비에 따라 이미지를 조절할 수 있었다.
