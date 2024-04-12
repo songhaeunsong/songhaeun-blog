@@ -1,0 +1,85 @@
+---
+title: "React에 네이버 지도 API 연동하기"
+date: 2024-04-12
+description: React에 네이버 지도 API 연동하여 지도 페이지를 만들자.
+img: https://velog.velcdn.com/images/songhaeunsong/post/2184d7d5-a6e0-40f8-9f9b-1106c512292e/image.png
+---
+
+React에 네이버 지도 API 연동한 과정을 정리해보려고 한다.
+
+<br />
+
+## 1. 네이버 클라우드 - 어플리케이션 등록
+
+먼저 사용할 api의 ClientID를 발급 받기 위해 네이버 클라우드에서 어플리케이션을 등록해야 한다.
+
+[네이버 클라우드 어플리케이션 등록](https://m.blog.naver.com/n_cloudplatform/222012109447)
+
+<br />
+
+## 2. index.html - 스크립트 코드 추가
+
+다음으로 index.html의 `<head>` 에 아래와 같은 자바스크립트 코드를 추가한다.
+
+```html
+<script
+  type="text/javascript"
+  src="https://oapi.map.naver.com/openapi/v3/maps.js?ncpClientId=%VITE_MAP_CLIENT_ID%"
+></script>
+```
+
+ClientID는 보안을 위해 환경 변수로 설정하여 넣어주었다.
+
+<br />
+
+## 3. 페이지에 적용하기
+
+지도를 구현할 페이지에 다음과 같이 적어준다.
+
+```js
+import { useEffect, useRef } from "react";
+
+const Map = () => {
+  const mapRef = useRef(null);
+  const lat = 37.3595704; // 위도
+  const lng = 127.105399; // 경도
+
+  useEffect(() => {
+    if (mapRef.current) {
+      const location = new naver.maps.LatLng(lat, lng);
+      const map = new naver.maps.Map(mapRef.current, {
+        center: location, // 지도의 중심점 설정
+        zoom: 17, // 지도의 줌 정도 설정
+      });
+      new naver.maps.Marker({
+        position: location, // 마커의 위치
+        map, // 마커가 표시될 지도
+      });
+    }
+  }, []);
+
+  return <div ref={mapRef} className="w-screen h-screen"></div>;
+};
+
+export default Map;
+```
+
+id를 통해 DOM을 참조하는 방식(네이버 지도 공식문서)대신 ref를 사용해 리액트와 통합시켰다!
+
+<br />
+
+> #### 사용된 네이버 지도 API 클래스 및 메서드
+>
+> - naver.maps.LatLng(lat, lng): 위도와 경도를 기반으로 LatLng 객체를 생성한다.
+> - naver.maps.Map: 지도를 초기화하고, 지도의 중심 위치와 줌 정도를 설정한다.
+> - naver.maps.Marker: 위에 생성한 location에 마커를 추가한다.
+
+<br />
+
+## 결과
+
+서울시청을 중심점으로 한 지도가 연동되는 것을 볼 수 있다.
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/2184d7d5-a6e0-40f8-9f9b-1106c512292e/image.png)
+
+(다음 게시글에서 현재 위치를 가져오는 방법에 대해 포스팅 할 예정)
