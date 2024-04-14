@@ -1,0 +1,108 @@
+---
+title: "Geolocation API로 현재 위치 가져오기"
+date: 2024-04-13
+description: Geolocation API를 활용해 현재 위치를 가져오는 useGeolocation 커스텀 훅을 만들자.
+img: https://velog.velcdn.com/images/songhaeunsong/post/c7c11935-23a7-459a-bdd0-40c03ff14702/image.png
+---
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/c7c11935-23a7-459a-bdd0-40c03ff14702/image.png)
+
+Geolocation API를 활용해 현재 위치(위도와 경도)를 반환하는 커스텀 훅을 만들어 보려고 한다.
+
+<br />
+
+## Geolocation API
+
+Geolocation API는 웹 브라우저에서 사용자의 위치 정보를 얻는 데 사용되는 API이다.
+
+### 대표적인 기능
+
+- getCurrentPosition(): 현재 사용자의 위치 정보를 비동기적으로 가져온다.
+- watchPosition(): 사용자의 위치가 변경될 때마다 위치 정보를 지속적으로 가져온다.
+- clearWatch(): watchPosition()에 의해 등록된 위치 추적을 중지한다.
+
+navigator.geolocation 뒤에 메서드를 적어서 사용하면 된다.
+
+<br />
+
+## getCurrentPosition()로 위치 정보 추출하기
+
+```js
+navigator.geolocation.getCurrentPosition(success, error);
+```
+
+위치 정보를 성공적으로 가져오면 success 콜백 함수를 호출하고, 실패하면 error 콜백 함수를 호출한다.
+
+### success 콜백
+
+success 콜백은 Position 객체를 매개변수로 받는다. <br/> 이 객체는 위치와 관련된 다양한 정보를 담고 있다.
+
+### error 콜백
+
+error 콜백은 PositionError 객체를 매개변수로 받는다. <br/> 오류가 발생하면 이 객체를 통해 오류 코드와 오류 메시지에 접근할 수 있다.
+
+<br />
+
+## 위치 정보 업데이트하기
+
+위치 정보가 성공적으로 반환되면 Position 객체 내에는 coords(좌표) 객체가 포함되어 있다. <br/>
+이 coords 객체에서 위도와 경도 정보를 추출하여 상태를 업데이트하면 된다.
+
+```js
+const success = (location) => {
+  setCurrentLocation({
+    lat: location.coords.latitude,
+    lng: location.coords.longitude,
+  });
+};
+```
+
+<br />
+
+## 전체 코드
+
+```js
+// useGeolocation.ts
+
+import { useState, useEffect } from "react";
+import { CurrentLocation } from "../types/types";
+
+export const useGeolocation = () => {
+  const [currentLocation, setCurrentLocation] =
+    useState <
+    CurrentLocation >
+    {
+      lat: 37.5664056,
+      lng: 126.9778222,
+    };
+  const [loading, setLoading] = useState(false);
+
+  const getPosition = () => {
+    setLoading(true);
+
+    const success = (location: {
+      coords: { latitude: number, longitude: number },
+    }) => {
+      setCurrentLocation({
+        lat: location.coords.latitude,
+        lng: location.coords.longitude,
+      });
+      setLoading(false);
+    };
+
+    const error = () => {
+      setLoading(false);
+    };
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(success, error);
+    }
+  };
+
+  useEffect(() => {
+    getPosition();
+  }, []);
+
+  return { currentLocation, loading };
+};
+```
