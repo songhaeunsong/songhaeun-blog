@@ -1,0 +1,67 @@
+---
+title: "[API 구현]SQL쿼리로 두 위치 사이 거리 구하기"
+date: 2024-04-17
+description: ST_Distance_Sphere 함수를 사용하여 내 위치 n 미터 반경의 데이터 추출하기
+img: https://velog.velcdn.com/images/songhaeunsong/post/84902851-2b3d-4f2a-9b8e-d0de37d1b615/image.png
+---
+
+1. 데이터 가공: JSON 데이터를 추출해 MySQL 데이터베이스에 저장하기
+
+> ### 2. SQL 쿼리: n 미터 반경의 데이터 추출하는 쿼리 작성
+
+3.  Express API 구현: SQL 쿼리를 바탕으로 반경과 좌표에 따라 주차장 정보를 반환하는 api 완성하기
+
+<br />
+<br />
+
+이제 데이터베이스로부터 **n 미터 반경의 데이터를 추출하는 SQL 쿼리**가 필요하다. <br />
+MySQL의 공간 데이터 처리 함수인 `ST_Distance_Sphere` 함수를 사용하여 <br />
+특정 지점에서 일정 반경 내의 위치들을 찾아내고 그 거리를 계산하려고 한다.
+
+<br />
+<br />
+## ST_Distance_Sphere
+
+ST_Distance_Sphere는 `두 점 사이의 최소 구면 거리`를 미터 단위로 계산한다. <br />
+`위도`와 `경도`를 사용하여 지구상의 두 위치 사이의 거리를 추정할 수 있다.
+
+```sql
+ST_Distance_Sphere(point(longitude1, latitude1), point(longitude2, latitude2))
+```
+
+- point(longitude, latitude)는 경도와 위도를 기반으로 점을 생성한다.
+
+<br />
+<br />
+## 위치 기반 쿼리 작성하기
+
+```sql
+SELECT *, ST_Distance_Sphere(
+  point(longitude, latitude),
+  point(:longitude, :latitude)) AS distance
+FROM parkings
+WHERE ST_Distance_Sphere(
+  point(longitude, latitude),
+  point(:longitude, :latitude)) <= :radius
+ORDER BY distance;
+```
+
+- SELECT 절: 모든 컬럼과 계산된 거리를 선택한다.
+- WHERE 절: 계산된 거리가 사용자가 지정한 반경 이내인 행을 필터링한다.
+- ORDER BY 절: 결과를 가장 가까운 위치부터 순서대로 나열한다.
+
+<br />
+
+### SELECT 절에서 `AS 키워드`를 사용
+
+- 계산 결과에 distance라는 이름을 붙여, 컬럼의 별칭을 지정해주었다.
+- 테이블 구조를 변경하지 않으면서 쿼리 결과에 임시 컬럼을 추가가 가능하다.
+
+<br />
+<br />
+
+## 결과
+
+이 쿼리를 실행하면, 반경 내에 있는 데이터만 필터링한 후 각 행에 distance 라는 추가적인 컬럼이 포함된 결과가 반환된다.
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/8b5ffe37-9f63-45f2-b269-648f881ff405/image.png)
