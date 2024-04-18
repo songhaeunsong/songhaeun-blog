@@ -1,0 +1,232 @@
+---
+title: "[API 구현]JSON 데이터를 추출해 MySQL 데이터베이스에 저장하기"
+date: 2024-04-16
+description: raw data로부터 필요한 속성만 골라 데이터를 가공하고, 데이터베이스에 테이블 생성 및 데이터 삽입하기
+img: https://velog.velcdn.com/images/songhaeunsong/post/84902851-2b3d-4f2a-9b8e-d0de37d1b615/image.png
+---
+
+> ### 1. 데이터 가공: JSON 데이터를 추출해 MySQL 데이터베이스에 저장하기
+
+2.  SQL 쿼리: n 미터 반경의 데이터 추출하는 쿼리 작성
+
+3.  Express API 구현: SQL 쿼리를 바탕으로 반경과 좌표에 따라 주차장 정보를 반환하는 api 완성하기
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/84902851-2b3d-4f2a-9b8e-d0de37d1b615/image.png)
+
+## 0. 시작하기
+
+### MySQL , node.js, express.js, sequilize를 설치해준다.
+
+- Sequelize
+  Sequelize는 Node.js 애플리케이션에서 사용할 수 있는 ORM으로, <br />
+  코드를 통해 데이터베이스의 데이터를 객체로 조작하고 관리할 수 있게 해준다.
+
+  - ORM (Object-Relational Mapping): 데이터베이스의 테이블을 객체로 매핑해, 데이터베이스를 객체 지향적으로 조작할 수 있게 해주는 프로그래밍 기법
+
+<br />
+
+### MySQL 클라이언트를 사용해서 DB 생성
+
+MySQL 클라이언트를 통해 MySQL 서버에 로그인
+
+```
+mysql -u [사용자 이름] -p
+```
+
+데이터베이스 만들기
+
+```
+CREATE DATABASE [데이터베이스 이름]
+```
+
+<br />
+<br />
+
+## 1. JSON 데이터에서 필요한 정보 추출하기
+
+DB에 들어갈 데이터를 가공하기 위해
+원시데이터에서 필요한 속성-값만 추출해서 가공된 데이터 json 파일을 만들어 주었다.
+
+```js
+// utils/dataProcessor.js
+
+const fs = require("fs");
+let rawData = fs.readFileSync("../data/rawData.json");
+let jsonData = JSON.parse(rawData);
+
+let processedData = jsonData.records.map((record) => {
+  return {
+    parkingName: record.주차장명,
+    parkingType: record.주차장구분,
+    roadAddress: record.소재지도로명주소,
+    address: record.소재지지번주소,
+    feeInfo: record.요금정보,
+    latitude: record.위도,
+    longitude: record.경도,
+  };
+});
+
+fs.writeFileSync(
+  "../data/processedData.json",
+  JSON.stringify(processedData, null, 2)
+);
+```
+
+터미널에서 해당 폴더에 들어가서 node [파일명].js 를 입력해 파일을 실행하면 된다. <br />
+파일이 실행되고 나면 미리 적어둔 경로에 processedData.json 이 생긴다.
+
+<br />
+<br />
+
+## 2. 테이블 생성 및 테이블의 구조 정의
+
+테이블을 생성하고 테이블의 구조를 정의하기 위해선 config와 model이 필요하다.
+
+<br />
+
+### config
+
+config 파일에서는 데이터베이스 연결 설정을 관리하는 데 사용되는 객체를 작성한다.
+
+이후 모델을 정의하는 데 사용하기 위해, config 파일에 Sequelize 인스턴스를 생성해주었다.
+
+```js
+// config/config.js
+
+require("dotenv").config(); // 환경변수 사용하기 위해 dotenv 사용
+
+const { Sequelize } = require("sequelize");
+const sequelize = new Sequelize(
+  "parkings",
+  "root",
+  process.env.MYSQL_PASSWORD,
+  {
+    host: "127.0.0.1",
+    dialect: "mysql",
+  }
+);
+
+module.exports = sequelize;
+```
+
+new Sequelize() 함수를 호출하여 Sequelize 인스턴스를 생성
+
+- 첫 번째 인자: 데이터베이스의 이름 ("parkings")
+- 두 번째 인자: 데이터베이스 사용자 이름 ("root")
+- 세 번째 인자: 데이터베이스 비밀번호 (process.env.MYSQL_PASSWORD)
+- 네 번째 인자: 연결 설정 객체,
+  - DB host ("127.0.0.1")
+  - SQL dialect ("mysql")
+
+이제 이 Sequelize 인스턴스를 통해 DB와의 연결을 설정하고, DB 테이블과 매핑되는 모델을 정의하는 데 사용할 수 있다.
+
+<br />
+
+### model
+
+model 파일은 테이블의 구조를 나타낸다. <br />
+모델을 통해 DB에 쿼리를 실행하고 데이터를 조작할 수 있다.
+
+아까 생성한 Sequelize 인스턴스를 가져오고 <br />
+sequelize.sync(),sequelize.define() 메서드를 사용해 테이블을 생성하고 테이블 구조를 정의해주었다.
+
+```js
+// models/parking.js
+
+const { DataTypes } = require("sequelize");
+const sequelize = require("../config/config");
+
+sequelize
+  .sync({ force: false })
+  .then(() => {
+    console.log("Table 생성");
+  })
+  .catch((error) => {
+    console.error("Error creating tables:", error);
+  });
+
+const Parking = sequelize.define(
+  "Parking",
+  {
+    parkingName: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    ...
+    longitude: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+  },
+  {
+    tableName: "parkings",
+    timestamps: false,
+  }
+);
+
+module.exports = Parking;
+
+```
+
+테이블이 없는 경우, 새로 만들어주기 위해 sequelize.sync()메서드를 사용했다.
+
+- `sequelize.sync({ force: false })`: 테이블을 생성하는 메서드
+
+  - `{ force: false }`: 테이블이 이미 존재하는 경우 이를 다시 생성하지 않음
+  - `{ force: true }`: 기존 테이블을 삭제하고 새로 생성
+
+- sequelize.define(): 모델명, 필드, 테이블 옵션을 정의하는 메서드
+  - 모델명: Parking이라는 이름의 모델을 정의
+  - 필드: 데이터 타입(DataTypes 객체를 사용), 널 허용 여부 정의
+  - 테이블 옵션: parkings 테이블과 매핑하며, 생성 및 업데이트 타임스탬프를 자동으로 관리하지 않도록 설정했다.
+
+<br />
+<br />
+
+## 3. 데이터 삽입
+
+1번에서 만들어 준 processedData.json 데이터를 파싱하고, <br />
+이 데이터를 Parking 모델을 통해 데이터베이스에 일괄 삽입(bulk insert)해주었다.
+
+```js
+// utils/insertData.js
+
+const fs = require("fs");
+const Parking = require("../models/parking"); // Parking 모델 불러오기
+
+// 가공된 JSON 파일 읽기
+fs.readFile("../data/processedData.json", "utf8", async (err, data) => {
+  if (err) {
+    console.error("Error reading file:", err);
+    return;
+  }
+
+  // 데이터 파싱
+  const parkings = JSON.parse(data);
+
+  try {
+    // 데이터베이스에 모든 주차장 정보 삽입
+    await Parking.bulkCreate(parkings);
+    console.log("db 삽입 완료");
+  } catch (error) {
+    console.error("Error inserting data:", error);
+  }
+});
+```
+
+터미널에서 해당 파일을 실행해주면 MySQL 데이터베이스에 저장 완성이다!
+
+<br />
+<br />
+
+## MySQL 데이터 확인
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/2351299a-b06b-4e12-8baa-79657115e82a/image.png)
+MySQL 클라이언트에
+
+```
+USE [데이터베이스 이름];
+SELECT * FROM [테이블 이름];
+```
+
+를 작성해주면 삽입된 전체 데이터가 반환되는 것을 볼 수 있다.
