@@ -1,0 +1,77 @@
+---
+title: "[API 구현]반경과 좌표를 통해 주차장 정보를 검색하는 api 구현하기"
+date: 2024-04-18
+description: SQL 쿼리를 바탕으로 반경과 좌표에 따라 주차장 정보를 반환하는 api 완성하기
+img: https://velog.velcdn.com/images/songhaeunsong/post/84902851-2b3d-4f2a-9b8e-d0de37d1b615/image.png
+---
+
+1. 데이터 가공: JSON 데이터를 추출해 MySQL 데이터베이스에 저장하기
+
+2. SQL 쿼리: n 미터 반경의 데이터 추출하는 쿼리 작성
+
+> ### 3. Express API 구현: SQL 쿼리를 바탕으로 반경과 좌표에 따라 주차장 정보를 반환하는 api 완성하기
+
+<br />
+<br />
+
+## 컨트롤러(Controller)와 라우터(Router)
+
+API의 구조를 라우터와 컨트롤러로 분리하여 구현했다.
+
+- 라우터: 요청을 적절한 컨트롤러로 전달하는 역할
+- 컨트롤러: 해당 요청의 비즈니스 로직을 처리하는 역할
+
+분리를 통해 각 컴포넌트의 역할을 분리해 독립성을 키우고, 코드의 가독성과 유지보수성을 향상시킬 수 있다.
+
+## Controller
+
+```js
+// controllers/parkingController.js
+
+const sequelize = require("../config/config");
+
+exports.getParkings = async (req, res) => {
+  const { latitude, longitude, radius } = req.query;
+  if (!latitude || !longitude || !radius) {
+    return res.status(400).send("파라미터 입력 오류");
+  }
+  const query = `
+    SELECT *, ST_Distance_Sphere(
+      point(longitude, latitude),
+      point(:longitude, :latitude)) AS distance
+    FROM parkings
+    WHERE ST_Distance_Sphere(
+      point(longitude, latitude),
+      point(:longitude, :latitude)) <= :radius
+    ORDER BY distance;
+  `;
+
+  try {
+    const parkingSpots = await sequelize.query(query, {
+      replacements: {
+        longitude,
+        latitude,
+        radius,
+      },
+      type: sequelize.QueryTypes.SELECT,
+    });
+    res.json(parkingSpots);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+};
+```
+
+## Router
+
+```js
+// routes/parkingRoutes.js
+
+const express = require("express");
+const router = express.Router();
+const parkingController = require("../controllers/parkingController.js");
+
+router.get("/parking", parkingController.getParkings);
+
+module.exports = router;
+```

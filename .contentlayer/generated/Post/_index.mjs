@@ -21,5 +21,6 @@ import post8Mdx from './post8.mdx.json' assert { type: 'json' }
 import post9Mdx from './post9.mdx.json' assert { type: 'json' }
 import post22Mdx from './post22.mdx.json' assert { type: 'json' }
 import post23Mdx from './post23.mdx.json' assert { type: 'json' }
+import post24Mdx from './post24.mdx.json' assert { type: 'json' }
 
-export const allPosts = [post10Mdx, post11Mdx, post12Mdx, post13Mdx, post14Mdx, post15Mdx, post16Mdx, post17Mdx, post18Mdx, post19Mdx, post20Mdx, post21Mdx, post3Mdx, post4Mdx, post5Mdx, post6Mdx, post7Mdx, post8Mdx, post9Mdx, post22Mdx, post23Mdx]
+export const allPosts = [post10Mdx, post11Mdx, post12Mdx, post13Mdx, post14Mdx, post15Mdx, post16Mdx, post17Mdx, post18Mdx, post19Mdx, post20Mdx, post21Mdx, post3Mdx, post4Mdx, post5Mdx, post6Mdx, post7Mdx, post8Mdx, post9Mdx, post22Mdx, post23Mdx, post24Mdx]
