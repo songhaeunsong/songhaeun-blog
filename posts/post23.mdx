@@ -1,20 +1,20 @@
 ---
 title: "[API 구현]SQL쿼리로 두 위치 사이 거리 구하기"
 date: 2024-04-17
-description: ST_Distance_Sphere 함수를 사용하여 내 위치 n 미터 반경의 데이터 추출하기
+description: ST_Distance_Sphere 함수를 사용하여 내 위치 반경 n 미터의 데이터 추출하기
 img: https://velog.velcdn.com/images/songhaeunsong/post/84902851-2b3d-4f2a-9b8e-d0de37d1b615/image.png
 ---
 
 1. 데이터 가공: JSON 데이터를 추출해 MySQL 데이터베이스에 저장하기
 
-> ### 2. SQL 쿼리: n 미터 반경의 데이터 추출하는 쿼리 작성
+> ### 2. SQL 쿼리: 반경 n 미터의 데이터 추출하는 쿼리 작성
 
 3.  Express API 구현: SQL 쿼리를 바탕으로 반경과 좌표에 따라 주차장 정보를 반환하는 api 완성하기
 
 <br />
 <br />
 
-이제 데이터베이스로부터 **n 미터 반경의 데이터를 추출하는 SQL 쿼리**가 필요하다. <br />
+이제 데이터베이스로부터 **반경 n 미터의 데이터를 추출하는 SQL 쿼리**가 필요하다. <br />
 MySQL의 공간 데이터 처리 함수인 `ST_Distance_Sphere` 함수를 사용하여 <br />
 특정 지점에서 일정 반경 내의 위치들을 찾아내고 그 거리를 계산하려고 한다.
 
