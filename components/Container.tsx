@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import Link from "next/link";
 import Head from "next/head";
-import Nav from "./Nav";
 import metaData from "@/data/metaData";
 import { useState, useEffect } from "react";
 
@@ -14,22 +13,22 @@ const Container = (props: any) => {
     ...props.customMeta,
   };
 
-  const [scrolling, setScrolling] = useState(false);
+  // const [scrolling, setScrolling] = useState(false);
 
-  const handleScroll = () => {
-    if (window.scrollY > 0) {
-      setScrolling(true);
-    } else {
-      setScrolling(false);
-    }
-  };
+  // const handleScroll = () => {
+  //   if (window.scrollY > 0) {
+  //     setScrolling(true);
+  //   } else {
+  //     setScrolling(false);
+  //   }
+  // };
 
-  useEffect(() => {
-    window.addEventListener("scroll", handleScroll);
-    return () => {
-      window.removeEventListener("scroll", handleScroll);
-    };
-  }, []);
+  // useEffect(() => {
+  //   window.addEventListener("scroll", handleScroll);
+  //   return () => {
+  //     window.removeEventListener("scroll", handleScroll);
+  //   };
+  // }, []);
 
   return (
     <>
@@ -39,15 +38,7 @@ const Container = (props: any) => {
         <meta property="og:site_name" content={meta.author} />
         <link rel="shortcut icon" href={meta.icon} />
       </Head>
-      <GNB scrolling={scrolling}>
-        <Link href="/">
-          <LogoImg src={metaData.logoUrl} alt="logo" />
-        </Link>
-        <Nav scrolling={scrolling} />
-        <title>{meta.title}</title>
-        <meta content={meta.description} name="description" />
-        <meta property="og:site_name" content={meta.author} />
-      </GNB>
+
       <Background>
         <StyledMain>{props.children}</StyledMain>
       </Background>
