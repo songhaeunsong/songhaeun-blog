@@ -1,0 +1,148 @@
+---
+title: "[JAVA] Scanner, BufferedReader 입력 비교"
+date: 2024-07-15
+description: 백준 1000 A+B을 Scanner, BufferedReader로 풀어보면서 두 클래스의 입력 방법을 비교해부자
+img: https://velog.velcdn.com/images/songhaeunsong/post/822d5367-edb8-498a-a02a-ece6b580e565/image.png
+---
+
+자바에서 입출력을 처리하는데 사용하는 클래스에는 대표적으로 두가지가 있다.
+- BufferedReader (추천)
+- Scanner
+
+
+[백준 1000번 A+B](https://www.acmicpc.net/problem/1000)로 두 클래스의 사용방법을 살펴보고, 장단점을 비교해보자! 
+
+<br />
+
+## Scanner
+
+### 사용방법 및 특징
+
+**편리한 입력**
+
+nextInt() 메서드를 사용하여 정수형 데이터를 쉽게 입력받는다.
+
+**다양한 입력 소스 지원**
+
+기본적으로 System.in을 사용하여 콘솔로부터 입력을 받는다.
+
+**정규 표현식 사용 가능**
+
+nextInt()와 같은 메서드는 공백이나 개행을 구분하여 입력을 처리한다.
+
+
+<br />
+
+
+```js
+import java.util.*;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        
+        int n = scanner.nextInt();
+        int m = scanner.nextInt();
+        
+        System.out.println(n + m);
+        
+        scanner.close();
+    }
+}
+```
+
+<br />
+
+### 장점
+- 다양한 형식의 입력을 손쉽게 읽을 수 있는 메서드를 제공한다. 
+
+ex) Scanner의 nextInt() 메소드를 사용하면 공백을 기준으로 입력된 정수를 순서대로 읽어올 수 있다.
+
+- 코드가 간결하고 이해하기 쉽다.
+
+<br />
+
+### 단점
+- BufferedReader보다 느리다.
+- 대용량 파일을 처리할 때 성능 차이가 크다.(BufferedReader를 추천하는 이유)
+- 많은 메모리를 사용한다.
+- 기본적으로 공백을 구분자로 사용하며, 이를 변경하려면 추가 작업을 해야한다. ( useDelimiter() 사용)
+
+<br />
+<br />
+
+## BufferedReader
+
+### 사용방법 및 특징
+
+**입력 속도 향상**
+
+내부 버퍼를 사용하여 입력 속도를 높인다.
+System.in으로부터 효율적으로 입력을 받는다.
+
+**다양한 입력 소스 지원**
+
+다양한 Reader 객체를 감쌀 수 있다.
+InputStreamReader를 통해 바이트 기반의 System.in을 문자 기반으로 변환 후 BufferedReader로 감싼다.
+
+**라인 단위 입력**
+
+readLine() 메서드로 한 줄 단위로 입력을 읽는다.
+읽은 한 줄을 필요한 토큰으로 나누어 처리할 수 있다.
+
+**문자열 분할**
+
+StringTokenizer를 사용하여 입력된 문자열을 공백 기준으로 분할한다.
+split() 대신 StringTokenizer를 사용하여 속도 및 성능을 최적화한다.
+
+**예외 처리 필요**
+
+메서드들이 IOException을 발생시킬 수 있으므로 throws IOException을 선언하거나 try-catch 블록으로 예외를 처리해야 한다.
+
+<br />
+
+```js
+import java.util.*;
+import java.io.*;
+
+public class Main {
+    public static void main(String[] args) throws IOException {
+        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
+        StringTokenizer st = new StringTokenizer(br.readLine()," ");
+
+        int n = Integer.parseInt(st.nextToken());
+        int m = Integer.parseInt(st.nextToken());
+        
+        System.out.println(n+m);
+
+        br.close();
+    }
+}
+
+```
+cf) Buffer : 데이터를 전송할 때, 일시적으로 그 데이터를 보관하는 임시메모리 영역
+입출력 속도 향상을 위해 사용된다.
+
+
+<br />
+
+
+### 장점
+- BufferedReader는 버퍼링을 사용하기 때문에, 대용량 데이터 읽기에 적합하고, Scanner보다 빠르다.
+- 더 적은 메모리를 사용한다.
+- 데이터 형식이 다양한 경우 유리하다.
+
+<br />
+
+### 단점
+- StringTokenizer나 split() 메서드를 사용하여 데이터를 파싱해야 한다. (코드가 복잡해질 수 있다.)
+- 데이터를 정수, 실수 등으로 변환하려면 추가 작업이 필요하다.
+
+<br />
+
+### 정리
+Scanner는 간편하고 다양한 입력 소스를 처리할 수 있다는 장점이 있지만, 대용량 데이터 처리 성능과 메모리 사용면에서는 BufferedReader가 더 유리하다. 
+
+데이터가 크고 메모리 제한이 있는 알고리즘 문제를 푸는 경우에는 BufferedReader를 사용하는 것이 더 합리적으로 보인다!
+
+
