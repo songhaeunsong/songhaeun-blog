@@ -77,7 +77,7 @@ const Background = styled.div`
 
 const StyledMain = styled.main`
   width: 55vw;
-  padding: 80px 30px 200px 30px;
+  padding: 40px 30px 200px 30px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -85,7 +85,7 @@ const StyledMain = styled.main`
 
   @media screen and (max-width: 900px) {
     width: 95vw;
-    padding: 80px 0px 50px 0px;
+    padding: 30px 0px 50px 0px;
   }
 `;
 
