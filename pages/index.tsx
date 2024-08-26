@@ -95,7 +95,7 @@ const StyledButton = styled.button`
   margin-top: 30px;
 
   @media screen and (max-width: 1300px) {
-    font-size: 6vw;
+    font-size: 4vw;
     padding: 2vw 4vw;
   }
   button:hover {

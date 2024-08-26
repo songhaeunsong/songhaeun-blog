@@ -67,6 +67,7 @@ const GNB = styled.header<{ scrolling: boolean }>`
 `;
 
 const Background = styled.div`
+  overflow: hidden;
   padding: 0px;
   margin: 0;
   width: 100%;
