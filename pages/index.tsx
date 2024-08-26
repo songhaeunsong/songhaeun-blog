@@ -45,18 +45,18 @@ export const getStaticProps = async () => {
 };
 
 const HomeText = styled.span`
- background-color: ${(props)=>props.theme.whiteFontColor};
+  background-color: ${(props) => props.theme.whiteFontColor};
   text-align: center;
   color: ${(props) => props.theme.pointColor};
   font-size: min(50px, 6vw);
   font-family: Serif;
-  position: relative; 
+  position: relative;
 
   span {
     font-size: min(20px, 4vw);
     font-family: "Arial Narrow";
-    color: ${(props) => props.theme.pointColor};;
-    position: relative; 
+    color: ${(props) => props.theme.pointColor};
+    position: relative;
   }
 
   span:before {
@@ -72,12 +72,13 @@ const HomeText = styled.span`
   }
 
   @keyframes animate {
-    40%, 60% {
-      left: calc(100% + 1px);
+    40%,
+    60% {
+      transform: translateX(100%);
     }
 
     100% {
-      left: 0%;
+      transform: translateX(0);
     }
   }
 `;
