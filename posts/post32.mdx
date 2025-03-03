@@ -1,0 +1,214 @@
+---
+title: "리액트에서 WebSocket, STOMP를 사용해 훅 만들기"
+date: 2025-01-29
+description: "방별 메시지 구독 및 전송이 가능한 useWebsocket 훅을 구현해보자."
+img: https://velog.velcdn.com/images/songhaeunsong/post/5385aa43-d5f7-44c1-9584-4e19f42bb551/image.png
+---
+
+> WebSocket는 실시간 양방향 통신 역할을 담당하며, STOMP는 메시지를 전달하는 데 필요한 규칙과 형식을 정의한다.
+
+<br />
+
+### 내 프로젝트에서 필요한 기능
+
+- 사용자 2명이 독립된 방(코드)을 생성 및 참여
+- 정답 제출 및 점수 현황을 받아오는 웹소켓 통신
+- 여러 방에서 동시에 독립적으로 게임이 진행
+
+Websocket 자체에는 방이나 네임스페이스 같은 개념이 없지만, STOMP를 활용하면 이 기능들을 비교적 쉽게 구현할 수 있다.
+
+STOMP는 Topic 기반의 메시징을 제공하기 때문에, 방 개념을 `토픽`으로 매핑하면 된다.
+
+<br />
+
+## STOMP를 활용한 방 기능 구현
+
+STOMP는 방별로 고유한 토픽을 정의할 수 있다.
+
+클라이언트는 특정 방의 `토픽을 구독`하고, 서버는 해당 토픽으로 `메시지를 브로드캐스트`하여 클라이언트가 **방별 메시지만 수신하도록 구현할 수 있다.**
+
+### 방별 Topic 정의
+
+각 방에 고유한 토픽을 설정한다.
+
+- 클라이언트는 특정 방에 입장할 때 해당 토픽을 subscribe하고, 메시지를 전송할 때는 해당 토픽으로 메시지를 send한다.
+
+### 클라이언트의 구독 및 상태 관리
+
+STOMP 클라이언트는 특정 방의 토픽을 구독한다.
+
+```js
+stompClient.subscribe("/topic/room/123", (message) => {
+  const data = JSON.parse(message.body); // 수신 메세지
+
+  // 상태 업데이트
+  setRoomInfo((prev) => ({ ...prev, ...data }));
+});
+```
+
+### 메시지 전송
+
+- 특정 방의 모든 사용자에게 메시지를 보내려면 해당 토픽으로 메시지를 전송한다.
+
+메시지 전송 예시
+
+```js
+stompClient.send(
+  "/app/room/123",
+  {},
+  JSON.stringify({ message: "Hello, Room 123!" })
+);
+```
+
+<br />
+
+## STOMP를 이용해 WebSocket 통신을 구현하는 React 훅 만들기
+
+### 1. 초기 상태 관리
+
+사용자에게 실시간으로 전송되어야 하는 정보들을 관리한다.
+
+- 방 상태, 방 정보 등
+
+### 2. WebSocket 클라이언트 초기화
+
+Client 객체(STOMP 프로토콜을 통해 WebSocket 통신을 관리하는 객체) 생성한다.
+
+```js
+client.current = new Client({
+  webSocketFactory: () =>
+    new Websocket(`${import.meta.env.VITE_WEBSOCKET_URL}`),
+  reconnectDelay: 5000, // 재연결 대기 시간
+  heartbeatIncoming: 4000, // 서버 -> 클라이언트 하트비트 간격
+  heartbeatOutgoing: 4000, // 클라이언트 -> 서버 하트비트 간격
+});
+```
+
+- `webSocketFactory`를 사용해 HTTP 서버에 WebSocket 업그레이드 요청을 보낸다.
+- `reconnectDelay`를 설정해 연결 끊김 시 자동으로 재연결을 시도하는 대기 시간을 지정한다.
+- `heartbeatIncoming`과 `heartbeatOutgoing`을 통해 클라이언트와 서버 간 연결 상태를 유지할 수 있도록 하트비트 주기를 설정한다.
+
+이때, `Client` 객체를 `useRef`로 초기화해야 재렌더링 시에도 STOMP 클라이언트 상태를 유지하며, 불필요한 렌더링을 방지할 수 있다.
+
+### 3. 메시지 구독 및 응답 처리(상태 업데이트)
+
+onConnect에서 Topic을 구독한다.
+
+```js
+client.current.onConnect = () => { // WebSocket 연결 성공 후 로직
+
+  // 구독
+  client.current!.subscribe('/topic/구독할 토픽', (message) => {
+    const updatedStatus = JSON.parse(message.body).body;
+    // 구독한 메세지에서 온 응답을 1. 초기 상태를 변경하여 관리한다.
+  });
+};
+
+```
+
+- 서버에서 해당 Topic에 대한 정보를 JSON으로 보내면, 이를 수신해 상태를 업데이트한다.
+
+### 4. 메시지 전송 함수 생성
+
+클라이언트가 WebSocket을 통해 서버로 메시지를 전송할 수 있도록 sendMessage 함수 생성한다.
+
+```js
+const sendMessage = (destination: string, payload: PayloadProps) => {
+  if (!client.current || !client.current.connected) {
+    console.error("WebSocket이 아직 연결되지 않았습니다.");
+    return;
+  }
+
+  client.current.publish({ destination, body: JSON.stringify(payload) });
+};
+```
+
+- destination은 서버가 처리할 경로
+- payload는 JSON으로 변환된 메시지 내용
+
+### 5. 에러 처리
+
+```js
+client.current.onStompError = (frame) => {
+  console.error("STOMP 에러:", frame.headers["message"]);
+};
+```
+
+### 6. 연결 시작
+
+위의 설정들로 웹소켓 연결을 시작한다.
+
+```js
+client.current.activate();
+```
+
+### 7. 연결 해제
+
+컴포넌트 언마운트 시 연결을 해제한다.
+
+```js
+client.current.deactivate();
+```
+
+<br />
+
+## 전체 코드
+
+```js
+import { useEffect, useRef, useState } from 'react';
+import { Client } from '@stomp/stompjs';
+
+const useWebsocket = () => {
+  const client = useRef<Client | null>(null);
+
+  // 방 상태 정의하기
+  const [roomStatus, setRoomStatus] = useState('WAITING');
+
+  useEffect(() => {
+    // Websocket 연결 초기화
+    client.current = new Client({
+      webSocketFactory: () => new Websocket(`${import.meta.env.VITE_BASE_URL}/game-websocket`),
+      debug: (str) => console.log(str),
+      reconnectDelay: 5000,
+      heartbeatIncoming: 4000,
+      heartbeatOutgoing: 4000,
+    });
+
+    client.current.onConnect = () => {
+      console.log('Websocket 연결 성공');
+
+      // 방 상태 구독
+      client.current!.subscribe('/topic/room-status', (message) => {
+        const updatedStatus = JSON.parse(message.body).body;
+        // 상태 업데이트
+      });
+    };
+
+    client.current.onStompError = (frame) => {
+      console.error('STOMP 에러:', frame.headers['message']);
+    };
+
+    client.current.activate();
+
+    return () => {
+      if (client.current) {
+        client.current.deactivate();
+      }
+    };
+  }, []);
+
+  const sendMessage = (destination: string, payload: unknown) => {
+    if (!client.current || !client.current.connected) {
+      console.error('WebSocket이 아직 연결되지 않았습니다.');
+      return;
+    }
+
+    client.current.publish({ destination, body: JSON.stringify(payload) });
+  };
+
+  return { sendMessage, 상태값 };
+};
+
+export default useWebsocket;
+
+```
