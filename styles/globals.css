@@ -24,6 +24,8 @@ body {
 }
 */
 :root {
+  background-color: #ffffff;
+
   font-family: "NEXON Lv1 Gothic OTF", sans-serif, "Lucida Sans",
     "Lucida Sans Regular", "Lucida Grande", "Lucida Sans Unicode", Geneva,
     Verdana;

@@ -10,7 +10,7 @@ interface TProps {
   img: string;
 }
 
-const PostItem: FC<TProps> = ({ date, title, description, img }) => {
+const PostItem = ({ date, title, description, img }: TProps) => {
   return (
     <StyledContainer>
       <div>
@@ -26,6 +26,8 @@ const PostItem: FC<TProps> = ({ date, title, description, img }) => {
 const StyledContainer = styled.div`
   padding: 30px;
   display: flex;
+  box-shadow: 1px 1px 10px #eceaea;
+
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
