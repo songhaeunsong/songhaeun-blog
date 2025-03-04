@@ -5,14 +5,14 @@ import PostItem from "./PostItem";
 
 interface RecentPostsProps {
   posts: Post[];
-  postCount: number;
+  startPost: number;
 }
-const RecentPosts: React.FC<RecentPostsProps> = ({ posts, postCount }) => {
+const RecentPosts = ({ posts, startPost }: RecentPostsProps) => {
   return (
     <StyledContentsContainer>
       <h1>{posts.length}개의 게시물</h1>
       <section>
-        {posts.slice(0, postCount).map((post) => (
+        {posts.slice(startPost, startPost + 7).map((post) => (
           <StyledLink
             key={post._id}
             href={`/blog/${post._raw.flattenedPath}`}
