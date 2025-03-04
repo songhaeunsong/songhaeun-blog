@@ -1,0 +1,101 @@
+---
+title: "HMR(Hot Module Replacement)의 동작 원리"
+date: 2025-03-04
+description: "HMR의 원리를 알아보고 VITE와 Webpack에서의 성능 차이를 살펴보자"
+img: https://velog.velcdn.com/images/songhaeunsong/post/59a6f549-e5d1-42bc-ac94-e80185a4876c/image.png
+---
+
+HMR(Hot Module Replacement)는 코드를 수정했을 때 웹 페이지 전체를 새로고침하지 않고도 변경된 부분만 즉시 업데이트하는 기술이다.
+
+<br />
+
+## HMR의 동작 방식
+
+### 1️⃣ 파일 변경 감지 (File Watcher)
+
+- Webpack이나 Vite가 파일 시스템(File System)을 감시하여 소스 코드가 변경되는지 확인한다.
+
+  `Webpack: fs.watch()나 chokidar를 내부적으로 사용` `Vite: 자체 파일 감지 시스템 사용`
+
+### 2️⃣ 변경 사항을 클라이언트에 전달 (WebSocket)
+
+- 파일이 변경되면 번들러가 WebSocket을 통해 클라이언트(브라우저)에게 변경된 모듈 정보를 전송한다.
+
+### 3️⃣ 클라이언트에서 새 코드로 교체
+
+- 클라이언트에서 변경된 모듈을 다시 불러오고, 기존 모듈을 대체한다.
+
+- react-refresh 같은 Fast Refresh 플러그인를 활용해 UI 상태를 유지하며 변경된 컴포넌트만 업데이트할 수 있다.
+
+> Fast Refresh 플러그인: 컴포넌트의 변경 사항을 감지하고, 기존 상태를 유지한 채 새 코드만 교체하는 역할
+
+<br />
+
+## live-server와의 차이
+
+live-server는 변경이 감지되면 전체 파일이 리로드된다. 따라서 속도가 느릴 수 밖에 없다. 또한 Vite HMR처럼 상태가 유지되지 않고 초기화된다.
+
+<br />
+
+## Vite와 Webpack의 HMR 구조 및 동작
+
+Webpack과 Vite는 모두 `HMR(Hot Module Replacement)`을 지원하지만, **내부적인 구조**와 **동작 방식**이 다르다.
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/f49f2c6d-aca9-44fa-975a-b6a5f3b60270/image.png)
+
+- Webpack은 번들링 기반의 HMR을 사용
+- Vite는 네이티브 ESM(ES 모듈) 기반의 HMR을 사용
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/926b145c-dfb4-4718-9784-8105bd23523c/image.png)
+
+Webpack은 번들링 과정이 포함되어 속도가 느릴 수 있고, Vite는 ESM(ES 모듈) 기반으로 동작하여 더 빠르게 반영된다.
+
+<br />
+
+## Next.js의 HMR
+
+Next.js에서는 Vite 없이도 자체적인 개발 서버(next dev)가 실행되며, HMR이 자동으로 적용된다.
+
+### 그럼 뭘로 HMR이 적용되는 거지?
+
+=> Next.js는 내부적으로 Webpack 기반의 HMR 시스템을 사용하여 변경 사항을 자동으로 반영한다.
+
+Next.js가 Webpack을 최적화해서 사용하기 때문에 기존 Webpack HMR보다 훨씬 빠르게 변경 사항 반영 가능하다.
+
+### Next.js의 Webpack 최적화
+
+1️⃣ 자동 코드 분할 (Automatic Code Splitting)
+
+Next.js는 페이지 단위로 번들링하므로, 불필요한 코드 로드가 없음.
+Webpack의 기본 번들링 방식보다 훨씬 가벼운 초기 로드 제공.
+
+2️⃣ 서버 사이드 렌더링(SSR) 최적화
+
+Webpack 번들링 시 SSR에 불필요한 코드(클라이언트 전용 코드)를 제외하여 불필요한 빌드 시간을 단축함.
+
+3️⃣ 파일 기반 라우팅 시스템
+
+Webpack의 엔트리 포인트 설정을 따로 하지 않아도, Next.js가 자동으로 최적화된 Webpack 번들을 생성.
+
+4️⃣ Only Update Changed Modules (변경된 모듈만 다시 빌드)
+
+Next.js는 변경된 파일만 감지하여 빠르게 다시 빌드하므로 불필요한 재번들링을 최소화함.
+
+> Next.js는 Webpack의 기본 HMR이 아니라 React Fast Refresh를 사용하여 HMR을 최적화한다.
+> React Fast Refresh로 인해 컴포넌트 상태를 유지하면서 UI만 업데이트되며, 코드 변경은 최소한의 부분만 교체될 수 있는 것이다.
+
+<br />
+
+하지만 Next.js는 Webpack을 최적화해 사용했음에도 Vite보다 HMR이 빠르진 않다.
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/bca0aa4c-c949-411e-a8b2-ef6d3268128c/image.png)
+
+### Next.js는 왜 Vite로 전환하지 않을까?
+
+1️⃣ Next.js는 SSR을 지원하는데, Webpack은 SSR에 최적화된 번들링 환경을 제공함.
+
+Vite는 기본적으로 클라이언트 사이드 번들링을 위한 도구이므로, SSR에 Webpack만큼 최적화되지 않음.
+
+2️⃣ Next.js의 안정성
+
+Webpack은 대규모 애플리케이션에서 널리 사용되는 검증된 기술이며, Next.js의 기존 최적화와 잘 맞음.
