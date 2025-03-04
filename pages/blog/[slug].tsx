@@ -57,6 +57,8 @@ const PostTitle = styled.h2`
   text-align: center;
   font-size: min(30px, 5vw);
   margin-top: 0;
+  color: ${(props) => props.theme.deepPointColor};
+  margin-bottom: 90px;
 `;
 
 const PostContent = styled.div`
@@ -65,7 +67,6 @@ const PostContent = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  background-color: ${(props) => props.theme.whiteFontColor};
 
   article {
     width: 100%;
