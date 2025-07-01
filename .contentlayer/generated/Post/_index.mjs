@@ -29,6 +29,7 @@ import post32Mdx from './post32.mdx.json' assert { type: 'json' }
 import post35Mdx from './post35.mdx.json' assert { type: 'json' }
 import post36Mdx from './post36.mdx.json' assert { type: 'json' }
 import post37Mdx from './post37.mdx.json' assert { type: 'json' }
+import post38Mdx from './post38.mdx.json' assert { type: 'json' }
 import post4Mdx from './post4.mdx.json' assert { type: 'json' }
 import post5Mdx from './post5.mdx.json' assert { type: 'json' }
 import post6Mdx from './post6.mdx.json' assert { type: 'json' }
@@ -36,4 +37,4 @@ import post7Mdx from './post7.mdx.json' assert { type: 'json' }
 import post8Mdx from './post8.mdx.json' assert { type: 'json' }
 import post9Mdx from './post9.mdx.json' assert { type: 'json' }
 
-export const allPosts = [post1Mdx, post10Mdx, post11Mdx, post12Mdx, post13Mdx, post14Mdx, post15Mdx, post16Mdx, post17Mdx, post18Mdx, post19Mdx, post2Mdx, post20Mdx, post21Mdx, post22Mdx, post23Mdx, post24Mdx, post25Mdx, post26Mdx, post27Mdx, post28Mdx, post29Mdx, post3Mdx, post30Mdx, post31Mdx, post32Mdx, post35Mdx, post36Mdx, post37Mdx, post4Mdx, post5Mdx, post6Mdx, post7Mdx, post8Mdx, post9Mdx]
+export const allPosts = [post1Mdx, post10Mdx, post11Mdx, post12Mdx, post13Mdx, post14Mdx, post15Mdx, post16Mdx, post17Mdx, post18Mdx, post19Mdx, post2Mdx, post20Mdx, post21Mdx, post22Mdx, post23Mdx, post24Mdx, post25Mdx, post26Mdx, post27Mdx, post28Mdx, post29Mdx, post3Mdx, post30Mdx, post31Mdx, post32Mdx, post35Mdx, post36Mdx, post37Mdx, post38Mdx, post4Mdx, post5Mdx, post6Mdx, post7Mdx, post8Mdx, post9Mdx]
