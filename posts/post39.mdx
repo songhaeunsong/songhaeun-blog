@@ -1,0 +1,192 @@
+---
+title: "Flux 아키택처 디자인 패턴"
+date: 2025-05-14
+description: "Flux 패턴의 등장과 내부 구조"
+img: https://velog.velcdn.com/images/songhaeunsong/post/be091638-446b-4724-81f6-b9d473fe2a9a/image.png
+---
+
+### 왜 리액트에서는 MVC보다 flux 패턴이 많이 쓰일까요?<br /> 리덕스는 무슨 패턴인지 설명해보세요.
+
+다음과 같은 질문에 뭐라고 답할 수 있을지를 생각해보며 flux 패턴에 대해 정리해보고자 한다.
+
+## Flux 패턴의 도입
+
+복잡한 UI 상태 관리 문제를 해결하기 위해 등장했다. <br />Facebook에서 React를 도입한 이후, 복잡한 애플리케이션에서 상태 관리의 한계에 직면하면서 고안된 구조이다.
+
+### MVC(Model-View-Controller) 패턴의 한계
+
+전통적인 MVC는 작은 앱에는 적합하지만, 앱이 커지면 <br />
+`양방향 바인딩으로 인해 상태 변경 흐름이 복잡하고 추적이 어려워진다`
+라는 문제가 발생한다.
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/a87dfd91-b4d1-4144-9dd8-4a1c376c7b2b/image.png)
+
+여러 View가 동일한 Model을 바꾸고, 그 Model이 또 다른 View를 바꾸는 순환적 참조가 발생한다.
+
+이는 리액트의 철학과도 충돌한다.
+
+React는 단방향 데이터 흐름을 기본으로 설계되었고,
+기존 MVC 기반 상태 관리 방식은 React의 구조와 맞지 않았다. <br />
+따라서, React와 함께 사용할 더 일관된 상태 관리 구조가 필요해졌다.
+
+## Flux 패턴의 등장
+
+"애플리케이션이 커질수록, 데이터가 어떻게 흘러가는지 이해하기 어려워졌습니다. 우리는 이를 단순화하고자, 모든 데이터가 한 방향으로만 흐르는 아키텍처를 만들었습니다. 그것이 바로 Flux입니다."
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/be091638-446b-4724-81f6-b9d473fe2a9a/image.png)
+
+상태 변경은 오직 Action → Dispatcher → Store를 거쳐야만 가능하다.
+
+상태는 Store에만 존재하고, View는 상태를 읽기만 함
+
+데이터 흐름이 한 방향으로만 흐르므로, 예측 가능하고 디버깅이 쉽다.
+
+## Action
+
+사용자 요청을 Action 객체로 만들어 Dispatcher에 전달한다.
+
+```jsx
+// actions/counterActions.js
+import { dispatcher } from "../dispatcher/dispatcher";
+
+// 버튼 클릭 시 호출되는 액션 생성 함수
+export const incrementCounter = () => {
+  // Dispatcher에게 "INCREMENT" 타입의 액션을 전달
+  dispatcher.dispatch({ type: "INCREMENT" });
+};
+```
+
+## Dispatcher
+
+액션을 받아서 스토어로 전달한다.
+
+```jsx
+// dispatcher/dispatcher.js
+class Dispatcher {
+  constructor() {
+    this.callbacks = []; // 스토어에서 등록한 콜백 리스트
+  }
+
+  // Store가 자신의 액션 핸들러를 등록
+  register(callback) {
+    this.callbacks.push(callback);
+  }
+
+  // 액션이 발생하면 등록된 모든 콜백에 액션 전달
+  dispatch(action) {
+    for (const callback of this.callbacks) {
+      callback(action);
+    }
+  }
+}
+
+export const dispatcher = new Dispatcher();
+```
+
+## Store
+
+상태를 보관하고, dispatcher로부터 액션을 받아 처리하며 상태 변화가 있을 때 View에 알린다.
+
+```jsx
+// store/counterStore.js
+import { dispatcher } from "../dispatcher/dispatcher";
+
+let count = 0; // 현재 상태
+let listeners = []; // View에서 등록한 구독자 목록
+
+export const getState = () => count;
+
+export const subscribe = (listener) => {
+  listeners.push(listener);
+  return () => {
+    listeners = listeners.filter((l) => l !== listener);
+  };
+};
+
+// 스토어는 dispatcher에 자기 자신을 등록
+dispatcher.register((action) => {
+  switch (action.type) {
+    case "INCREMENT":
+      count += 1;
+      // 상태 변경을 View에 알림
+      listeners.forEach((listener) => listener());
+      break;
+    default:
+      break;
+  }
+});
+```
+
+## View
+
+상태를 구독하고 화면 렌더링, Action을 호출한다.
+
+```jsx
+// components/Counter.jsx
+import { useEffect, useState } from "react";
+import { getState, subscribe } from "../store/counterStore";
+import { incrementCounter } from "../actions/counterActions";
+
+export default function Counter() {
+  const [count, setCount] = useState(getState());
+
+  useEffect(() => {
+    const unsubscribe = subscribe(() => {
+      setCount(getState()); // 상태 업데이트 시 재렌더링
+    });
+
+    // 컴포넌트 언마운트 시 구독 해제
+    return unsubscribe;
+  }, []);
+
+  return (
+    <div>
+      <h1>Count: {count}</h1>
+      <button onClick={incrementCounter}>+1</button>
+    </div>
+  );
+}
+```
+
+## Flux와 Redux
+
+Flux에 대해 이야기 할 때, 이 패턴을 계승한 라이브러리로 흔히 Redux를 떠올린다.
+그럼 Redux는 Flux 패턴을 그대로 계승한 라이브러리일까?
+
+정답은 아니다. 리덕스는 Flux의 핵심 아이디어(단방향 데이터 흐름, 액션 중심 상태 변경)를 바탕으로 설계되었지만, 구조는 더 단순화되고 다르다.
+
+![](https://velog.velcdn.com/images/songhaeunsong/post/eff34b42-a405-4fc5-af24-de72cc209938/image.png)
+
+위의 흐름도처럼 dispatcher는 사라지고, Reducer라는 개념이 생겼다.
+
+기존 Flux에서 Dispatcher는 액션을 받아서 Store에 전달해주는 역할을 한다. 그리고 Store에서 자체적으로 상태를 업데이트 한다.
+
+Redux에서는 Dispatcher가 사라지고, 대신 dispatch() 함수는 Store에 내장되었다.
+
+dispatch() 내부에서 Action 객체를 Reducer에 전달하여 Store의 상태를 변경하도록 트리거한다.
+
+```jsx
+// dispatch() 내부 로직
+
+function dispatch(action) {
+  // 현재 상태와 액션을 reducer에 전달
+  currentState = reducer(currentState, action);
+
+  // 상태 구독자에게 변경 알림
+  listeners.forEach((listener) => listener());
+}
+```
+
+즉 Flux의 Dispatcher는 Redux에서 Store의 dispatch()로 대체되었으며, 상태 변경 역시 Store 내부에서 직접 처리하지 않고, 외부에 정의된 Reducer 함수가 담당한다.
+
+## 질문에 답변해보기
+
+### 왜 React에서는 MVC보다 Flux 패턴이 많이 쓰일까요?
+
+React는 단방향 데이터 흐름을 기반으로 하기 때문에, 양방향 바인딩 구조인 MVC보다는 Flux 패턴이 더 잘 맞습니다.
+Flux는 데이터가 한 방향으로 흐르기 때문에 상태 관리가 예측 가능하고 디버깅이 쉬워 React와 궁합이 좋습니다.
+
+## Redux는 무슨 패턴인가요?
+
+Redux는 Flux에서 파생된 단방향 상태 관리 패턴입니다.
+하나의 중앙 저장소(Store)에 상태를 모아두고, 상태 변경은 항상 액션(Action)과 리듀서(Reducer)를 통해서만 이루어지도록 강제합니다. 이러한 구조 덕분에 상태 변경의 흐름은 'Action → Reducer → Store → View'의 순서를 따라 항상 한 방향으로 진행되며, 이로 인해 복잡한 애플리케이션에서도 상태 추적이 용이하고 디버깅이 쉬워집니다.
